@@ -1,0 +1,667 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Company Manager API",
+    "description": "This is the documentation for the Company Manager API usage.",
+    "terms": "",
+    "contact": {
+      "email": "nunojllemos@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3003/api/v1",
+      "description": "Local API"
+    },
+    {
+      "url": "http://165.227.137.60/api/v1",
+      "description": "Production API"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Login endpoint",
+        "description": "This endpoint is used for logging in a user.",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "email": { "type": "string" },
+                      "password": { "type": "string" }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "user": {
+                  "email": "john@email.com",
+                  "password": "a1b2d3"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/Auth"
+                  }
+                },
+                "example": {
+                  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUyMDFlNmY2LTFlZWMtNDIzMi04MzNlLTdhMjNkM2U1NzUwZiIsImZpcnN0X25hbWUiOiJOdW5vIiwiZW1haWwiOiJudW5vQGVtYWlsLmNvbSIsImlhdCI6MTcwNDg5ODE2MywiZXhwIjoxNzA0ODk4NzYzfQ.4J5GMVUtTlf3Zlnsz3pb_AmYLYZLQo7DKmNMmW6joWI",
+                  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUyMDFlNmY2LTFlZWMtNDIzMi04MzNlLTdhMjNkM2U1NzUwZiIsImZpcnN0X25hbWUiOiJOdW5vIiwiZW1haWwiOiJudW5vQGVtYWlsLmNvbSIsImlhdCI6MTcwNDg5ODE2MywiZXhwIjoxNzA1MzMwMTYzfQ.nhINQcxogwrGJgsDjhUWb8KO-FFEFyYshRH1MRS0nmQ"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/ErrorMessage"
+                  },
+                  "example": {
+                    "code": 400,
+                    "status": "Bad Request",
+                    "message": "🔴 Bad request: no user email or password given."
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unhauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/ErrorMessage"
+                  }
+                },
+                "examples": {
+                  "sample1": {
+                    "summary": "Invalid password response.",
+                    "value": {
+                      "code": 401,
+                      "status": "Unauthorized",
+                      "message": "🔴 Password is incorrect."
+                    }
+                  },
+                  "sample2": {
+                    "summary": "Invalid email response.",
+                    "value": {
+                      "code": 401,
+                      "status": "Unauthorized",
+                      "message": "🔴 Email not found."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "delete": {
+        "summary": "Logout endpoint",
+        "description": "This endpoint is used for logging out a user.",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "refresh_token",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUyMDFlNmY2LTFlZWMtNDIzMi04MzNlLTdhMjNkM2U1NzUwZiIsImZpcnN0X25hbWUiOiJOdW5vIiwiZW1haWwiOiJudW5vQGVtYWlsLmNvbSIsImlhdCI6MTcwNDg5ODE2MywiZXhwIjoxNzA1MzMwMTYzfQ.nhINQcxogwrGJgsDjhUWb8KO-FFEFyYshRH1MRS0nmQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "message": "👋 User logged out."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                },
+                "example": {
+                  "code": 404,
+                  "status": "Not found",
+                  "message": "🔴 No user logged in."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                },
+                "example": {
+                  "code": 401,
+                  "status": "Unauthorized",
+                  "message": "🔴 Something went wrong."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh-token": {
+      "get": {
+        "summary": "Refresh token endpoint",
+        "description": "This endpoint is used for refresh the access token.",
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "refresh_token",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUyMDFlNmY2LTFlZWMtNDIzMi04MzNlLTdhMjNkM2U1NzUwZiIsImZpcnN0X25hbWUiOiJOdW5vIiwiZW1haWwiOiJudW5vQGVtYWlsLmNvbSIsImlhdCI6MTcwNDg5ODE2MywiZXhwIjoxNzA1MzMwMTYzfQ.nhINQcxogwrGJgsDjhUWb8KO-FFEFyYshRH1MRS0nmQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": { "$ref": "#/components/schemas/Auth" }
+                },
+                "example": {
+                  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUyMDFlNmY2LTFlZWMtNDIzMi04MzNlLTdhMjNkM2U1NzUwZiIsImZpcnN0X25hbWUiOiJOdW5vIiwiZW1haWwiOiJudW5vQGVtYWlsLmNvbSIsImlhdCI6MTcwNDg5ODE2MywiZXhwIjoxNzA0ODk4NzYzfQ.4J5GMVUtTlf3Zlnsz3pb_AmYLYZLQo7DKmNMmW6joWI",
+                  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUyMDFlNmY2LTFlZWMtNDIzMi04MzNlLTdhMjNkM2U1NzUwZiIsImZpcnN0X25hbWUiOiJOdW5vIiwiZW1haWwiOiJudW5vQGVtYWlsLmNvbSIsImlhdCI6MTcwNDg5ODE2MywiZXhwIjoxNzA1MzMwMTYzfQ.nhINQcxogwrGJgsDjhUWb8KO-FFEFyYshRH1MRS0nmQ"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unhauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": { "$ref": "#/components/schemas/Auth" }
+                },
+                "examples": {
+                  "tokenNull": {
+                    "summary": "Refresh token is null",
+                    "value": {
+                      "code": 401,
+                      "status": "Unauthorized",
+                      "message": "🔴 The refresh token is null."
+                    }
+                  },
+                  "error": {
+                    "summary": "Something went wrong",
+                    "value": {
+                      "code": 401,
+                      "status": "Unauthorized",
+                      "message": "🔴 Something went wrong."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid refresh token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                },
+                "example": {
+                  "code": 403,
+                  "status": "Forbidden",
+                  "message": "⛔️ The refresh token is invalid."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "type": "array",
+        "summary": "Get all users",
+        "description": "This endpoint needs to be authenticated to work.",
+        "tags": ["Users"],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "results": [
+                    {
+                      "id": "5201e6f6-1eec-4232-833e-7a23d3e5750f",
+                      "first_name": "John",
+                      "last_name": "Doe",
+                      "user_password": "$2a$06$JR/JA7F24/GG6yWy1HwfAO7cP3WesbELgD8pMn9Kw3/umJm15cz22",
+                      "email": "john@email.com",
+                      "role_id": 2
+                    },
+                    {
+                      "id": "ae810832-c5b4-439a-8d4b-5f105f6b0ac1",
+                      "first_name": "Jane",
+                      "last_name": "Doe",
+                      "user_password": "$2a$06$JR/JA7F24/GG6yWy1HwfAO7cP3WesbELgD8pMn9Kw3/umJm15cz22",
+                      "email": "jane@email.com",
+                      "role_id": 5
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "type": "object",
+        "summary": "Add new user",
+        "description": "This endpoint needs to be authenticated to work. Also needs a request body.",
+        "tags": ["Users"],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRequestBody"
+              },
+              "example": {
+                "users": {
+                  "id": "5201e6f6-1eec-4232-833e-7a23d3e5750f",
+                  "first_name": "John",
+                  "last_name": "Doe",
+                  "user_password": "$2a$06$JR/JA7F24/GG6yWy1HwfAO7cP3WesbELgD8pMn9Kw3/umJm15cz22",
+                  "email": "john@email.com",
+                  "role_id": 2
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ErrorMessage"
+                },
+                "example": {
+                  "code": 201,
+                  "status": "Created",
+                  "message": "🟢 User created"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ErrorMessage"
+                },
+                "example": {
+                  "code": 403,
+                  "status": "Forbidden",
+                  "message": "🔴 User already exists"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "type": "object",
+        "summary": "Delete user",
+        "description": "This endpoint needs to be authenticated to work. Also needs a request body.",
+        "tags": ["Users"],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRequestBody"
+              },
+              "example": {
+                "users": {
+                  "id": "5201e6f6-1eec-4232-833e-7a23d3e5750f",
+                  "first_name": "John",
+                  "last_name": "Doe",
+                  "user_password": "$2a$06$JR/JA7F24/GG6yWy1HwfAO7cP3WesbELgD8pMn9Kw3/umJm15cz22",
+                  "email": "john@email.com",
+                  "role_id": 2
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ErrorMessage"
+                },
+                "example": {
+                  "code": 201,
+                  "status": "Created",
+                  "message": "🟢 User created"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ErrorMessage"
+                },
+                "example": {
+                  "code": 403,
+                  "status": "Forbidden",
+                  "message": "🔴 User already exists"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "type": "object",
+        "summary": "Get a single user",
+        "description": "This endpoint needs to be authenticated to work.",
+        "tags": ["Users"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": { "$ref": "#/components/schemas/Users" }
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "results": [
+                    {
+                      "id": "5201e6f6-1eec-4232-833e-7a23d3e5750f",
+                      "first_name": "John",
+                      "last_name": "Doe",
+                      "user_password": "$2a$06$JR/JA7F24/GG6yWy1HwfAO7cP3WesbELgD8pMn9Kw3/umJm15cz22",
+                      "email": "john@email.com",
+                      "role_id": 2
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                },
+                "example": {
+                  "code": 404,
+                  "status": "Not found",
+                  "message": "🔴 Parameter id not found"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                },
+                "example": {
+                  "code": 401,
+                  "status": "Unauthorized",
+                  "message": "🔴 Something went wrong"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "type": "object",
+        "summary": "Update user",
+        "description": "This endpoint needs to be authenticated to work.",
+        "tags": ["Users"],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRequestBody"
+              },
+              "example": {
+                "users": {
+                  "email": "new_john_email@email.com"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                },
+                "example": {
+                  "code": 200,
+                  "status": "OK",
+                  "message": "🟢 User updated"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": { "$ref": "#/components/schemas/ErrorMessage" }
+                },
+                "example": {
+                  "code": 400,
+                  "status": "Bad Request",
+                  "message": "🔴 Request body must include user data"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/roles": {
+      "get": {
+        "type": "array",
+        "summary": "Get all users",
+        "description": "This endpoint needs to be authenticated to work.",
+        "tags": ["Users"],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {}
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "Cookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "refresh_token"
+      },
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "ErrorMessage": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "number" },
+          "message": { "type": "string" },
+          "status": { "type": "string" }
+        }
+      },
+      "Auth": {
+        "type": "object",
+        "properties": {
+          "accessToken": { "type": "string" },
+          "refreshToken": { "type": "string" }
+        }
+      },
+      "Users": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "first_name": { "type": "string" },
+          "last_name": { "type": "string" },
+          "user_password": { "type": "string" },
+          "email": { "type": "string" },
+          "role_id": { "type": "number" }
+        }
+      },
+      "UserRequestBody": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "first_name": { "type": "string" },
+              "last_name": { "type": "string" },
+              "user_password": { "type": "string" },
+              "email": { "type": "string" },
+              "role_id": { "type": "number" }
+            }
+          }
+        }
+      },
+      "ArrayOfUsers": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Users"
+        },
+        "example": [
+          {
+            "id": "123",
+            "first_name": "Nuno",
+            "last_name": "Lemos",
+            "email": "nuno@email.com",
+            "user_password": "asdasd",
+            "role_id": 1
+          }
+        ]
+      }
+    }
+  }
+}
