@@ -1,5 +1,10 @@
 import { Router } from 'express'
-import { getRoles, getRoleById, addRole, deleteRoleById } from '@controllers/roles-controller'
+import {
+  getRoles,
+  getRoleById,
+  addRole,
+  deleteRoleById,
+} from '@controllers/v1/roles-controller'
 
 const router = Router()
 

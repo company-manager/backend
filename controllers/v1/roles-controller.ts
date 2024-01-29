@@ -1,5 +1,12 @@
 import { Request, Response } from 'express'
-import { addNewRoleQuery, checkIfRoleExistsByName, checkIfRoleExistsById, deleteRoleQuery, getAllRolesQuery, getRoleByIdQuery } from '@queries/roles-queries'
+import {
+  addNewRoleQuery,
+  checkIfRoleExistsByName,
+  checkIfRoleExistsById,
+  deleteRoleQuery,
+  getAllRolesQuery,
+  getRoleByIdQuery,
+} from '@queries/v1/roles-queries'
 import pool from '@database/index'
 
 // 🚀 Get all roles
@@ -32,11 +39,18 @@ export const addRole = (req: Request, res: Response) => {
     const hasResults = results.rows.length
 
     if (error) throw error
-    if (hasResults) return res.status(403).json({ code: 403, status: 'Forbidden', message: '🔴 Role already exists' })
+    if (hasResults)
+      return res.status(403).json({
+        code: 403,
+        status: 'Forbidden',
+        message: '🔴 Role already exists',
+      })
 
     pool.query(addNewRoleQuery, [name], (error) => {
       if (error) throw error
-      res.status(201).json({ code: 201, status: 'Created', message: '🟢 Role created' })
+      res
+        .status(201)
+        .json({ code: 201, status: 'Created', message: '🟢 Role created' })
     })
   })
 }
@@ -49,12 +63,19 @@ export const deleteRoleById = (req: Request, res: Response) => {
     const hasResults = results.rows.length
 
     if (error) throw error
-    if (!hasResults) return res.status(404).json({ code: 404, status: 'Not found', message: "🔴 Role doesn't exist" })
+    if (!hasResults)
+      return res.status(404).json({
+        code: 404,
+        status: 'Not found',
+        message: "🔴 Role doesn't exist",
+      })
 
     pool.query(deleteRoleQuery, [id], (error) => {
       if (error) throw error
 
-      res.status(200).send({ code: 200, status: 'OK', message: '🟢 Role deleted' })
+      res
+        .status(200)
+        .send({ code: 200, status: 'OK', message: '🟢 Role deleted' })
     })
   })
 }
