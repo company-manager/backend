@@ -7,6 +7,8 @@ import {
 } from '@controllers/v1/roles-controller'
 
 const router = Router()
+const __test = 'TEST'
+console.log(__test)
 
 router.get('/', getRoles)
 router.post('/', addRole)
