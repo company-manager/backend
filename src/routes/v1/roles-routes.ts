@@ -1,16 +1,16 @@
-import { Router } from "express";
+import { Router } from 'express'
 import {
   getRoles,
   getRoleById,
   addRole,
   deleteRoleById,
-} from "@controllers-V1/roles-controller";
+} from '@controllers-V1/roles-controller'
 
-const router = Router();
+const router = Router()
 
-router.get("/", getRoles);
-router.post("/", addRole);
-router.delete("/", deleteRoleById);
-router.get("/:id", getRoleById);
+router.get('/', getRoles)
+router.post('/', addRole)
+router.delete('/', deleteRoleById)
+router.get('/:id', getRoleById)
 
-export default router;
+export default router

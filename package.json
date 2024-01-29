@@ -9,7 +9,7 @@
     "dev": "nodemon",
     "prepare": "husky install",
     "lint": "eslint . --fix --max-warnings=0",
-    "format": "prettier . --write",
+    "format": "prettier *.json --write",
     "seed:dev": "node -r tsconfig-paths/register -r ts-node/register ./database/seed.ts"
   },
   "dependencies": {
