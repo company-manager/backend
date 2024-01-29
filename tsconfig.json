@@ -3,11 +3,12 @@
     "paths": {
       "@src/*": ["./src/*"],
       "@database/*": ["./database/*"],
-      "@queries/*": ["./queries/*"],
-      "@controllers/*": ["./controllers/*"],
-      "@routes/*": ["./routes/*"],
+      "@queries-V1/*": ["./src/services/queries/v1/*"],
+      "@controllers-V1/*": ["./src/controllers/v1/*"],
+      "@routes-V1/*": ["./src/routes/v1/*"],
+      "@middleware/*": ["./src/middleware/*"],
       "@utils/*": ["./utils/*"],
-      "@middleware/*": ["./middleware/*"]
+      "@types/*": ["./types/*"]
     },
     "target": "es2017",
     "noImplicitAny": false,
