@@ -6,7 +6,7 @@ import {
   deleteRoleQuery,
   getAllRolesQuery,
   getRoleByIdQuery,
-} from '@queries-V1/roles-queries'
+} from '@src/services/queries/v1/roles.queries'
 import pool from '@database/.'
 
 // 🚀 Get all roles

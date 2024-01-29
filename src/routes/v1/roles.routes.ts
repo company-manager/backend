@@ -4,7 +4,7 @@ import {
   getRoleById,
   addRole,
   deleteRoleById,
-} from '@controllers-V1/roles-controller'
+} from '@src/controllers/v1/roles.controller'
 
 const router = Router()
 

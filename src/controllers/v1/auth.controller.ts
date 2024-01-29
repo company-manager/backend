@@ -2,7 +2,7 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
-import { checkUserEmailQuery } from '@queries-V1/auth-queries'
+import { checkUserEmailQuery } from '@src/services/queries/v1/auth.queries'
 import pool from '@database/.'
 import { jwtTokens } from '@utils/jwt-helpers'
 

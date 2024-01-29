@@ -8,7 +8,7 @@ import {
   getAllUsersQuery,
   getUserByIdQuery,
   updateUserQuery,
-} from '@queries-V1/users-queries'
+} from '@src/services/queries/v1/users.queries'
 import pool from '@database/.'
 
 const DEFAULT_ROLE_ID = 3
