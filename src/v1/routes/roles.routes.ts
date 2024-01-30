@@ -1,10 +1,10 @@
 import { Router } from 'express'
 import {
-  getRoles,
-  getRoleById,
-  addRole,
-  deleteRoleById,
-} from '@src/controllers/v1/roles.controller'
+    getRoles,
+    getRoleById,
+    addRole,
+    deleteRoleById,
+} from '@src/v1/controllers/roles.controller'
 
 const router = Router()
 

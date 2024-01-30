@@ -1,9 +1,9 @@
 import express from 'express'
 import {
-  loginController,
-  logoutController,
-  refreshTokenController,
-} from '@src/controllers/v1/auth.controller'
+    loginController,
+    logoutController,
+    refreshTokenController,
+} from '@src/v1/controllers/auth.controller'
 
 const router = express.Router()
 
