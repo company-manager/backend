@@ -2,6 +2,8 @@ import pool from '@database/.'
 import { User, UserUpdate } from '@global-types/index'
 import userQueries from '@src/v1/queries/users.queries'
 
+const DEFAULT_ROLE_ID = 3
+
 const getAll = async (): Promise<User[]> => {
     const results = await pool.query(userQueries.getAll)
     return results?.rows
@@ -23,7 +25,7 @@ const add = async (user: User) => {
         user.last_name,
         user.email,
         user.user_password,
-        user.role_id,
+        user.role_id || DEFAULT_ROLE_ID,
     ])
     return results?.rows?.[0]
 }
