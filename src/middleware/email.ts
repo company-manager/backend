@@ -20,8 +20,12 @@ transporter.verify((error) => {
 })
 
 const corsEmail = (req, res, next) => {
+    const origin =
+        process.env.NODE_ENV === 'production'
+            ? 'https://companymanager.space'
+            : 'http://localhost:5173'
     const corsOptions = {
-        origin: 'http://localhost:5173',
+        origin,
     }
     cors(corsOptions)
     next()
