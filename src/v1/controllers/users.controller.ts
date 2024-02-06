@@ -1,11 +1,11 @@
 /* eslint-disable camelcase */
 import { Request, Response } from 'express'
-import userServices from '@src/v1/services/users.services'
+import usersServices from '@services-V1/users.services'
 import responses from '@helpers/responses'
 
 const getAll = async (req: Request, res: Response) => {
     try {
-        const results = await userServices.getAll()
+        const results = await usersServices.getAll()
 
         return res.status(200).json({ ...responses.ok, results })
     } catch (error) {
@@ -18,7 +18,7 @@ const getAll = async (req: Request, res: Response) => {
 const getById = async (req: Request, res: Response) => {
     try {
         const id = req.params.id
-        const results = await userServices.getById(id)
+        const results = await usersServices.getById(id)
 
         if (!results)
             return res.status(404).json({
@@ -37,7 +37,7 @@ const getById = async (req: Request, res: Response) => {
 const add = async (req: Request, res: Response) => {
     try {
         const { email } = req.body.user
-        const isEmailAlreadyTaken = await userServices.getByEmail(email)
+        const isEmailAlreadyTaken = await usersServices.getByEmail(email)
 
         if (isEmailAlreadyTaken) {
             return res.status(403).json({
@@ -46,7 +46,7 @@ const add = async (req: Request, res: Response) => {
             })
         }
 
-        const results = await userServices.add(req.body.user)
+        const results = await usersServices.add(req.body.user)
 
         return res.status(201).send({
             ...responses.created,
@@ -60,10 +60,10 @@ const add = async (req: Request, res: Response) => {
     }
 }
 
-const deleteUser = async (req: Request, res: Response) => {
+const remove = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
-        const isIdValid = await userServices.getById(id)
+        const isIdValid = await usersServices.getById(id)
 
         if (!isIdValid) {
             return res.status(403).json({
@@ -72,7 +72,7 @@ const deleteUser = async (req: Request, res: Response) => {
             })
         }
 
-        const results = await userServices.deleteUser(id)
+        const results = await usersServices.remove(id)
         res.status(200).send({
             ...responses.ok,
             message: `🟢 User ${id} deleted`,
@@ -85,7 +85,7 @@ const deleteUser = async (req: Request, res: Response) => {
     }
 }
 
-const update = async (req, res) => {
+const update = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
         const hasData = req.body.user && Object.keys(req.body.user)?.length > 0
@@ -97,7 +97,7 @@ const update = async (req, res) => {
             })
         }
 
-        const results = await userServices.update(id, req?.body?.user)
+        const results = await usersServices.update(id, req?.body?.user)
         res.status(200).send({
             ...responses.ok,
             message: '🟢 User updated',
@@ -110,4 +110,4 @@ const update = async (req, res) => {
     }
 }
 
-export default { getAll, getById, add, update, deleteUser }
+export default { getAll, getById, add, update, remove }

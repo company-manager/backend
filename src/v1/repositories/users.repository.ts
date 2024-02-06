@@ -1,26 +1,26 @@
 import pool from '@database/.'
 import { User, UserUpdate } from '@global-types/index'
-import userQueries from '@src/v1/queries/users.queries'
+import usersQueries from '@src/v1/queries/users.queries'
 
 const DEFAULT_ROLE_ID = 3
 
 const getAll = async (): Promise<User[]> => {
-    const results = await pool.query(userQueries.getAll)
+    const results = await pool.query(usersQueries.getAll)
     return results?.rows
 }
 
 const getById = async (id: string): Promise<User> => {
-    const results = await pool.query(userQueries.getById, [id])
+    const results = await pool.query(usersQueries.getById, [id])
     return results?.rows?.[0]
 }
 
-const getByEmail = async (email: string): Promise<User | []> => {
-    const results = await pool.query(userQueries.getByEmail, [email])
+const getByEmail = async (email: string): Promise<User | undefined> => {
+    const results = await pool.query(usersQueries.getByEmail, [email])
     return results?.rows?.[0]
 }
 
 const add = async (user: User) => {
-    const results = await pool.query(userQueries.add, [
+    const results = await pool.query(usersQueries.add, [
         user.first_name,
         user.last_name,
         user.email,
@@ -30,13 +30,13 @@ const add = async (user: User) => {
     return results?.rows?.[0]
 }
 
-const deleteUser = async (id: string): Promise<User> => {
-    const results = await pool.query(userQueries.deleteUser, [id])
+const remove = async (id: string): Promise<User> => {
+    const results = await pool.query(usersQueries.remove, [id])
     return results?.rows?.[0]
 }
 
 const update = async (id: string, data: UserUpdate): Promise<UserUpdate> => {
-    const results = await pool.query(userQueries.update, [
+    const results = await pool.query(usersQueries.update, [
         id,
         data.first_name,
         data.last_name,
@@ -47,4 +47,4 @@ const update = async (id: string, data: UserUpdate): Promise<UserUpdate> => {
     return results?.rows?.[0]
 }
 
-export default { getAll, getById, getByEmail, add, deleteUser, update }
+export default { getAll, getById, getByEmail, add, remove, update }

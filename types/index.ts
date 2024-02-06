@@ -6,7 +6,15 @@ type HttpCallback = {
     next?: NextFunction
 }
 
+type Role = {
+    id: string
+    created_at: string
+    name: string
+}
+
 type User = {
+    id: string
+    created_at: string
     first_name: string
     last_name: string
     email: string
@@ -22,4 +30,4 @@ type UserUpdate = {
     role_id?: number
 }
 
-export { HttpCallback, User, UserUpdate }
+export { HttpCallback, Role, User, UserUpdate }

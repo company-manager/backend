@@ -1,63 +1,60 @@
 /* eslint-disable camelcase */
+import userService from '@services-V1/users.services'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
-import { checkUserEmailQuery } from '@src/v1/queries/auth.queries'
-import pool from '@database/.'
 import { jwtTokens } from '@utils/jwt-helpers'
+import responses from '@src/helpers/responses'
 
 dotenv.config()
 
-const loginController = async (req, res) => {
+const login = async (req, res) => {
     try {
-        const validUser = req.body.user
-        if (!validUser)
+        const validUserRequest = req.body.user
+        if (!validUserRequest)
             return res.status(400).json({
-                code: 400,
-                status: 'Bad Request',
-                message: '🔴 Bad request: no user email or password given.',
+                ...responses.badRequest,
+                tip: '🔴 No user email or password given',
             })
 
         const { email, password } = req.body.user
-        const users = await pool.query(checkUserEmailQuery, [email])
+        const user = await userService.getByEmail(email)
 
-        const user = users.rows[0]
         if (!user)
             return res.status(401).json({
-                code: 401,
-                status: 'Unauthorized',
-                message: '🔴 Email not found.',
+                ...responses.unauthorized,
+                tip: '🔴 Email not found',
             })
 
-        const validPassword = await bcrypt.compare(password, user.user_password)
-        if (!validPassword)
+        const isPasswordCorrect = await bcrypt.compare(
+            password,
+            user.user_password,
+        )
+        if (!isPasswordCorrect)
             return res.status(401).json({
-                code: 401,
-                status: 'Unauthorized',
+                ...responses.unauthorized,
                 message: '🔴 Password is incorrect.',
             })
 
         // JWT
         const userData = {
-            id: user.id,
-            first_name: user.first_name,
-            email: user.email,
+            id: user?.id,
+            email: user?.email,
         }
         const tokens = jwtTokens(userData)
 
-        res.cookie('refresh_token', tokens.refreshToken, { httpOnly: true })
-        res.json(tokens)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+        res.cookie('refresh_token', tokens.refreshToken, {
+            httpOnly: true,
+        }).json(tokens)
+    } catch (error) {
         res.status(401).json({
-            code: 401,
-            status: 'Unauthorized',
-            message: error.message,
+            ...responses.unauthorized,
+            error,
         })
     }
 }
 
-const refreshTokenController = (req, res) => {
+const refresh = (req, res) => {
     try {
         const refreshToken = req.cookies.refresh_token
         const { REFRESH_TOKEN_SECRET } = process.env
@@ -92,7 +89,7 @@ const refreshTokenController = (req, res) => {
     }
 }
 
-const logoutController = (req, res) => {
+const logout = (req, res) => {
     try {
         if (!req.cookies.refresh_token)
             return res.status(404).json({
@@ -113,4 +110,4 @@ const logoutController = (req, res) => {
     }
 }
 
-export { loginController, refreshTokenController, logoutController }
+export default { login, refresh, logout }

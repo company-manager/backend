@@ -5,7 +5,7 @@ const getById = `SELECT * FROM ${TABLE_NAME} WHERE id = $1`
 const getByEmail = `SELECT * FROM ${TABLE_NAME} WHERE email = $1`
 const checkById = `SELECT r FROM ${TABLE_NAME} r WHERE r.id = $1`
 const add = `INSERT INTO ${TABLE_NAME} (first_name, last_name, email, user_password, role_id) VALUES ($1,$2,$3, crypt($4, gen_salt('bf')),$5) RETURNING *`
-const deleteUser = `DELETE FROM ${TABLE_NAME} WHERE id = $1 RETURNING *`
+const remove = `DELETE FROM ${TABLE_NAME} WHERE id = $1 RETURNING *`
 const update = `UPDATE ${TABLE_NAME} SET 
     first_name = COALESCE(NULLIF($2, ''), first_name),
     last_name = COALESCE(NULLIF($3, ''), last_name),
@@ -22,6 +22,6 @@ export default {
     getByEmail,
     checkById,
     add,
-    deleteUser,
+    remove,
     update,
 }

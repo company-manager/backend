@@ -1,16 +1,11 @@
 import { Router } from 'express'
-import {
-    getRoles,
-    getRoleById,
-    addRole,
-    deleteRoleById,
-} from '@src/v1/controllers/roles.controller'
+import rolesControllers from '@src/v1/controllers/roles.controller'
 
 const router = Router()
 
-router.get('/', getRoles)
-router.post('/', addRole)
-router.delete('/', deleteRoleById)
-router.get('/:id', getRoleById)
+router.get('/', rolesControllers.getAll)
+router.post('/', rolesControllers.add)
+router.delete('/:id', rolesControllers.remove)
+router.get('/:id', rolesControllers.getById)
 
 export default router

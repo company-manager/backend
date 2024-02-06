@@ -1,85 +1,82 @@
 import { Request, Response } from 'express'
-import {
-    addNewRoleQuery,
-    checkIfRoleExistsByName,
-    checkIfRoleExistsById,
-    deleteRoleQuery,
-    getAllRolesQuery,
-    getRoleByIdQuery,
-} from '@src/v1/queries/roles.queries'
-import pool from '@database/.'
+import responses from '@src/helpers/responses'
+import rolesServices from '@services-V1/roles.services'
 
-// 🚀 Get all roles
-export const getRoles = (req: Request, res: Response) => {
-    pool.query(getAllRolesQuery, (error, results) => {
-        if (error) throw error
-
-        res.status(200).json({ code: 200, status: 'OK', results: results.rows })
-    })
-}
-
-// 🚀 Get role by id
-export const getRoleById = (req: Request, res: Response) => {
-    const id = req.params?.id
-
-    pool.query(getRoleByIdQuery, [id], (error, results) => {
-        if (error) throw error
-
-        res.status(200).json({ code: 200, status: 'OK', results: results.rows })
-    })
-}
-
-// 🚀 Add new role
-export const addRole = (req: Request, res: Response) => {
-    res.setHeader('Content-Type', 'application/json')
-    const { name } = req.body
-
-    // ✅ Check if role exists
-    pool.query(checkIfRoleExistsByName, [name], (error, results) => {
-        const hasResults = results.rows.length
-
-        if (error) throw error
-        if (hasResults)
-            return res.status(403).json({
-                code: 403,
-                status: 'Forbidden',
-                message: '🔴 Role already exists',
-            })
-
-        pool.query(addNewRoleQuery, [name], (error) => {
-            if (error) throw error
-            res.status(201).json({
-                code: 201,
-                status: 'Created',
-                message: '🟢 Role created',
-            })
+const getAll = async (req: Request, res: Response) => {
+    try {
+        const results = await rolesServices.getAll()
+        return res.status(200).json({ ...responses.ok, results })
+    } catch (error) {
+        res.status(401).json({
+            ...responses.unauthorized,
+            results: error,
         })
-    })
+    }
 }
 
-// 🛑 Delete role by id
-export const deleteRoleById = (req: Request, res: Response) => {
-    const { id } = req.body
+const getById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params
+        const results = await rolesServices.getById(id)
 
-    pool.query(checkIfRoleExistsById, [id], (error, results) => {
-        const hasResults = results.rows.length
-
-        if (error) throw error
-        if (!hasResults)
-            return res.status(404).json({
-                code: 404,
-                status: 'Not found',
-                message: "🔴 Role doesn't exist",
+        if (!results) {
+            return res.status(400).json({
+                ...responses.badRequest,
+                tip: '🔴 Role id is not valid',
             })
+        }
 
-        pool.query(deleteRoleQuery, [id], (error) => {
-            if (error) throw error
-
-            res.status(200).send({
-                code: 200,
-                status: 'OK',
-                message: '🟢 Role deleted',
-            })
+        return res.status(200).json({ ...responses.ok, results })
+    } catch (error) {
+        res.status(401).json({
+            ...responses.unauthorized,
+            results: error,
         })
-    })
+    }
 }
+
+const add = async (req: Request, res: Response) => {
+    try {
+        const { name } = req.body.role
+        const doesRoleAlreadyExist = await rolesServices.getByName(name)
+
+        if (doesRoleAlreadyExist) {
+            return res
+                .status(403)
+                .json({ ...responses.forbidden, tip: '🔴 Role already exists' })
+        }
+
+        const results = await rolesServices.add(name)
+
+        return res.status(201).json({ ...responses.created, results })
+    } catch (error) {
+        res.status(401).json({
+            ...responses.unauthorized,
+            results: error,
+        })
+    }
+}
+
+const remove = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params
+        const doesRoleExist = await rolesServices.getById(id)
+
+        if (!doesRoleExist) {
+            return res.status(400).json({
+                ...responses.badRequest,
+                tip: '🔴 Role id is not valid',
+            })
+        }
+
+        const results = await rolesServices.remove(id)
+        return res.status(200).send({ ...responses.ok, results })
+    } catch (error) {
+        res.status(401).json({
+            ...responses.unauthorized,
+            results: error,
+        })
+    }
+}
+
+export default { getAll, getById, remove, add }
