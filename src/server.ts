@@ -1,6 +1,7 @@
 import express, { Express } from 'express'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
+import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import usersRouter from '@src/v1/routes/users.routes'
 import rolesRouter from '@src/v1/routes/roles.routes'
@@ -13,10 +14,11 @@ dotenv.config()
 const app: Express = express()
 const PORT = process.env.PORT
 
+app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 
-app.post('/email', emailMiddleware.send)
+app.post('/email', emailMiddleware.corsEmail, emailMiddleware.send)
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerConfig))
 
