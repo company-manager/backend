@@ -1,10 +1,12 @@
 import express, { Express } from 'express'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
+import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
-import usersRouter from '@routes/users-routes'
-import rolesRouter from '@routes/roles-routes'
-import authRouter from '@routes/auth-routes'
+import usersRouter from '@src/v1/routes/users.routes'
+import rolesRouter from '@src/v1/routes/roles.routes'
+import authRouter from '@src/v1/routes/auth.routes'
+import emailMiddleware from '@middleware/email'
 import { authenticateToken } from '@middleware/authorization'
 import swaggerConfig from '@src/swagger.json'
 
@@ -12,12 +14,15 @@ dotenv.config()
 const app: Express = express()
 const PORT = process.env.PORT
 
+app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerConfig))
+app.post('/email', emailMiddleware.corsEmail, emailMiddleware.send)
 
-app.get('/', (req, res) => res.send('👋 Welcome to server'))
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerConfig))
+
+app.get('/api', (req, res) => res.send('👋 Welcome to server'))
 
 app.use('/api/v1/roles', authenticateToken, rolesRouter)
 app.use('/api/v1/users', authenticateToken, usersRouter)

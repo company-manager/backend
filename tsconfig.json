@@ -3,11 +3,15 @@
     "paths": {
       "@src/*": ["./src/*"],
       "@database/*": ["./database/*"],
-      "@queries/*": ["./queries/*"],
-      "@controllers/*": ["./controllers/*"],
-      "@routes/*": ["./routes/*"],
+      "@queries-V1/*": ["./src/v1/queries/*"],
+      "@controllers-V1/*": ["./src/v1/controllers/*"],
+      "@routes-V1/*": ["./src/v1/routes/*"],
+      "@repositories-V1/*": ["./src/v1/repositories/*"],
+      "@services-V1/*": ["./src/v1/services/*"],
+      "@middleware/*": ["./src/middleware/*"],
+      "@helpers/*": ["./src/helpers/*"],
       "@utils/*": ["./utils/*"],
-      "@middleware/*": ["./middleware/*"]
+      "@global-types/*": ["./types/*"]
     },
     "target": "es2017",
     "noImplicitAny": false,
