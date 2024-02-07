@@ -1,17 +1,21 @@
 {
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
   "compilerOptions": {
+    "baseUrl": "./",
     "paths": {
-      "@src/*": ["./src/*"],
-      "@database/*": ["./database/*"],
-      "@queries-V1/*": ["./src/v1/queries/*"],
-      "@controllers-V1/*": ["./src/v1/controllers/*"],
-      "@routes-V1/*": ["./src/v1/routes/*"],
-      "@repositories-V1/*": ["./src/v1/repositories/*"],
-      "@services-V1/*": ["./src/v1/services/*"],
-      "@middleware/*": ["./src/middleware/*"],
-      "@helpers/*": ["./src/helpers/*"],
-      "@utils/*": ["./utils/*"],
-      "@global-types/*": ["./types/*"]
+      "@src/*": ["src/*"],
+      "@database/*": ["database/*"],
+      "@queries-V1/*": ["src/v1/queries/*"],
+      "@controllers-V1/*": ["src/v1/controllers/*"],
+      "@routes-V1/*": ["src/v1/routes/*"],
+      "@repositories-V1/*": ["src/v1/repositories/*"],
+      "@services-V1/*": ["src/v1/services/*"],
+      "@middleware/*": ["src/middleware/*"],
+      "@helpers/*": ["src/helpers/*"],
+      "@utils/*": ["utils/*"],
+      "@global-types/*": ["types/*"]
     },
     "target": "es2017",
     "noImplicitAny": false,

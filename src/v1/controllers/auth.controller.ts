@@ -57,7 +57,6 @@ const login = async (req, res) => {
 const refresh = (req, res) => {
     try {
         const refreshToken = req.cookies.refresh_token
-        const { REFRESH_TOKEN_SECRET } = process.env
 
         if (!refreshToken)
             return res.status(401).json({
@@ -65,7 +64,11 @@ const refresh = (req, res) => {
                 status: 'Unauthorized',
                 message: '🔴 The refresh token is null.',
             })
-        jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (error, payload) => {
+
+        const refreshTokenSecret =
+            process.env.REFRESH_TOKEN_SECRET || 'refresh_token_secret'
+
+        jwt.verify(refreshToken, refreshTokenSecret, (error, payload) => {
             if (error)
                 return res.status(403).send({
                     code: 403,
@@ -77,7 +80,9 @@ const refresh = (req, res) => {
             const user = { id, first_name, email }
 
             const tokens = jwtTokens(user)
-            res.cookie('refresh_token', tokens.refreshToken, { httpOnly: true })
+            res.cookie('refresh_token', tokens.refreshToken, {
+                httpOnly: true,
+            })
             res.status(200).json(tokens)
         })
     } catch (error) {

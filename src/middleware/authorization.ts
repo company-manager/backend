@@ -14,7 +14,7 @@ const userLogInAuth = (req, res, next) => {
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers.authorization // Bearer TOKEN
-    const token = authHeader && authHeader.split(' ')[1]
+    const token = authHeader?.split(' ')[1]
 
     if (!token || isPostmanVariable(token))
         return res.status(401).json({
@@ -22,9 +22,10 @@ const authenticateToken = (req, res, next) => {
             status: 'Unauthorized',
             message: '🔴 The authentication token is null.',
         })
-    const { ACCESS_TOKEN_SECRET } = process.env
 
-    jwt.verify(token, ACCESS_TOKEN_SECRET, (error) => {
+    const accessTokenSecret =
+        process.env.ACCESS_TOKEN_SECRET || 'access_token_secret'
+    jwt.verify(token, accessTokenSecret, (error) => {
         if (error)
             return res.status(403).json({
                 code: 403,

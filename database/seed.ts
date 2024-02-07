@@ -6,14 +6,15 @@ import { dbConnection } from '@database/.'
 dotenv.config()
 
 const pool = new Pool(dbConnection)
+const seedFile = process.env.DB_SEED_FILE || 'dev-seed'
 
-if (process.env.NODE_ENV !== 'production') {
-    const seedQuery = fs.readFileSync('database/seed.sql', { encoding: 'utf8' })
+const seedQuery = fs.readFileSync(`database/seed/${seedFile}.sql`, {
+    encoding: 'utf8',
+})
 
-    pool.query(seedQuery, (error) => {
-        if (error) throw error
+pool.query(seedQuery, (error) => {
+    if (error) throw error
 
-        console.log('🌱 Database seeded')
-        pool.end()
-    })
-}
+    console.log('🌱 Database seeded')
+    pool.end()
+})
