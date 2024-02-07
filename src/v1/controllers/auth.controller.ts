@@ -3,7 +3,7 @@ import userService from '@services-V1/users.services'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
-import { jwtTokens } from '@utils/jwt-helpers'
+import { setJwtTokens } from '@utils/jwt-helpers'
 import responses from '@src/helpers/responses'
 
 dotenv.config()
@@ -41,7 +41,7 @@ const login = async (req, res) => {
             id: user?.id,
             email: user?.email,
         }
-        const tokens = jwtTokens(userData)
+        const tokens = setJwtTokens(userData)
 
         res.cookie('refresh_token', tokens.refreshToken, {
             httpOnly: true,
@@ -79,7 +79,7 @@ const refresh = (req, res) => {
             const { id, first_name, email } = payload
             const user = { id, first_name, email }
 
-            const tokens = jwtTokens(user)
+            const tokens = setJwtTokens(user)
             res.cookie('refresh_token', tokens.refreshToken, {
                 httpOnly: true,
             })

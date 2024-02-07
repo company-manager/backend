@@ -4,14 +4,6 @@ import jwt from 'jsonwebtoken'
 
 dotenv.config()
 
-const userLogInAuth = (req, res, next) => {
-    const user = req.body.user
-
-    if (!user) res.status(403).send('🔴 You need to be logged in to access.')
-
-    next()
-}
-
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers.authorization // Bearer TOKEN
     const token = authHeader?.split(' ')[1]
@@ -37,4 +29,4 @@ const authenticateToken = (req, res, next) => {
     })
 }
 
-export { authenticateToken, userLogInAuth }
+export { authenticateToken }

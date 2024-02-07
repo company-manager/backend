@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { JwtConfigType, UserType } from './types'
 
-const jwtTokens = (user: UserType) => {
+const setJwtTokens = (user: UserType) => {
     const accessTokenConfig: JwtConfigType = {
         expiresIn: '10m',
     }
@@ -20,4 +20,4 @@ const jwtTokens = (user: UserType) => {
     return { accessToken, refreshToken }
 }
 
-export { jwtTokens }
+export { setJwtTokens }
