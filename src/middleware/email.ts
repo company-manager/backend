@@ -4,26 +4,25 @@ import cors from 'cors'
 const transporter = nodemailer.createTransport({
     host: 'smtp0001.neo.space',
     port: 465,
-    secure: true, // upgrade later with STARTTLS
+    secure: true,
     auth: {
-        user: 'support@companymanager.space',
-        pass: 'fWoTohzPeQdbCmSS@6Ln#24XsXGsjjA6',
+        user: process.env.EMAIL_PROVIDER_ADDRESS || '',
+        pass: process.env.EMAIL_PROVIDER_PW || '',
     },
 })
 
 transporter.verify((error) => {
     if (error) {
-        console.log(error)
+        console.warn(
+            '🚨 Check email and password provided in /src/middleware/email.ts',
+        )
     } else {
         console.log('🔥 Server is ready to take our messages')
     }
 })
 
 const corsEmail = (req, res, next) => {
-    const origin =
-        process.env.NODE_ENV === 'production'
-            ? 'https://companymanager.space'
-            : 'http://localhost:5173'
+    const origin = process.env.API_ORIGIN || 'http://localhost:5173'
     const corsOptions = {
         origin,
     }
