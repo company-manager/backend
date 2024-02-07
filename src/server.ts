@@ -22,7 +22,9 @@ app.post('/email', emailMiddleware.corsEmail, emailMiddleware.send)
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerConfig))
 
-app.get('/api', (req, res) => res.send('👋 Welcome to server'))
+app.get('/api', (req, res) =>
+    res.status(200).json({ message: '👋 Welcome to server' }),
+)
 
 app.use('/api/v1/roles', authenticateToken, rolesRouter)
 app.use('/api/v1/users', authenticateToken, usersRouter)
