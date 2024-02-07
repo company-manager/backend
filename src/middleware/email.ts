@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer'
 import cors from 'cors'
+import path from 'path'
 
 const transporter = nodemailer.createTransport({
     host: 'smtp0001.neo.space',
@@ -38,17 +39,31 @@ const send = (req, res) => {
         from: 'support@companymanager.space',
         to: email,
         subject: 'ℹ️ INFO: Company Manager',
-        text: 'Hey 👋, obrigado pelo email. Iremos contactar assim que possível.',
+        html: `<div>
+                    <p>Hey 👋🏼</p>
+                    <br>
+                    <p>Obrigado pelo interesse. Em anexo segue o pdf com a apresentação da aplicação de gestão da Company Manager.</p>
+                    <br>
+                    <br>
+                </div>`,
+        attachments: [
+            {
+                path: path.join(__dirname, '/../../public/more_info.pdf'),
+            },
+        ],
     }
 
     if (!token) return res.status(403).json({ code: 403, message: 'Forbidden' })
 
-    if (token === process.env.EMAIL_PW) {
+    const authToken = process.env.EMAIL_PW || 'secret_email_dev'
+    if (token === authToken) {
         transporter.sendMail(options, (error, info) => {
-            if (error)
+            if (error) {
+                console.log(error)
                 return res
                     .status(400)
                     .send({ code: 400, message: 'Bad request' })
+            }
 
             console.log('Email sent: ' + info.response)
             return res.status(200).json({ message: 'Success' })
