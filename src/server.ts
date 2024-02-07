@@ -18,6 +18,8 @@ app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 
+!process.env.NODE_ENV && app.use('/public', express.static('public'))
+
 app.post('/email', emailMiddleware.corsEmail, emailMiddleware.send)
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerConfig))

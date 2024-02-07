@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer'
 import cors from 'cors'
-import path from 'path'
 
 const transporter = nodemailer.createTransport({
     host: 'smtp0001.neo.space',
@@ -34,6 +33,8 @@ const corsEmail = (req, res, next) => {
 const send = (req, res) => {
     const email = req.body?.email
     const token = req.headers?.authorization?.split(' ')[1]
+    const origin = process.env.API_ORIGIN || 'http://localhost:3003'
+    const pathToFile = `${origin}/public/more_info.pdf`
 
     const options = {
         from: 'support@companymanager.space',
@@ -48,7 +49,8 @@ const send = (req, res) => {
                 </div>`,
         attachments: [
             {
-                path: path.join(__dirname, '/../../public/more_info.pdf'),
+                filename: 'more_info.pdf',
+                path: pathToFile,
             },
         ],
     }
