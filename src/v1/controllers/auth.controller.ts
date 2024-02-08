@@ -44,14 +44,10 @@ const login = async (req, res) => {
         const tokens = setJwtTokens(userData)
 
         res.status(200)
-            .header('Authorization', tokens.accessToken)
             .cookie('refresh_token', tokens.refreshToken, {
                 httpOnly: true,
             })
-            .json({
-                user: { ...userData },
-                tokens,
-            })
+            .json(tokens)
     } catch (error) {
         res.status(401).json({
             ...responses.unauthorized,
