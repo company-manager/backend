@@ -42,12 +42,16 @@ const login = async (req, res) => {
             email: user.email,
         }
         const tokens = setJwtTokens(userData)
+        const { first_name, last_name, email: userEmail, id, role_id } = user
 
         res.status(200)
             .cookie('refresh_token', tokens.refreshToken, {
                 httpOnly: true,
             })
-            .json(tokens)
+            .json({
+                user: { id, email: userEmail, first_name, last_name, role_id },
+                tokens,
+            })
     } catch (error) {
         res.status(401).json({
             ...responses.unauthorized,
