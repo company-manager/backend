@@ -33,7 +33,7 @@ const login = async (req, res) => {
         if (!isPasswordCorrect)
             return res.status(401).json({
                 ...responses.unauthorized,
-                message: '🔴 Password is incorrect.',
+                tip: '🔴 Password is incorrect.',
             })
 
         // JWT
@@ -42,6 +42,7 @@ const login = async (req, res) => {
             email: user?.email,
         }
         const tokens = setJwtTokens(userData)
+        const { first_name, last_name, email: userEmail, id, role_id } = user
 
         res.status(200)
             .cookie('refresh_token', tokens.refreshToken, {
