@@ -7,6 +7,7 @@ dotenv.config()
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers.authorization // Bearer TOKEN
     const token = authHeader?.split(' ')[1]
+    console.log(authHeader)
 
     if (!token || isPostmanVariable(token))
         return res.status(403).json({
