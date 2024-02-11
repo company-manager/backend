@@ -3,7 +3,7 @@ import userService from '@services-V1/users.services'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
-import { setJwtTokens } from '@utils/jwt-helpers'
+import { setJwtTokens, setNewAccessToken } from '@utils/jwt'
 import responses from '@src/helpers/responses'
 
 dotenv.config()
@@ -14,7 +14,7 @@ const login = async (req, res) => {
         if (!validUserRequest)
             return res.status(400).json({
                 ...responses.badRequest,
-                tip: '🔴 No user email or password given',
+                tip: 'No user email or password given',
             })
 
         const { email, password } = req.body.user
@@ -23,7 +23,7 @@ const login = async (req, res) => {
         if (!user)
             return res.status(401).json({
                 ...responses.unauthorized,
-                tip: '🔴 Email not found',
+                tip: 'Email not found',
             })
 
         const isPasswordCorrect = await bcrypt.compare(
@@ -33,18 +33,18 @@ const login = async (req, res) => {
         if (!isPasswordCorrect)
             return res.status(401).json({
                 ...responses.unauthorized,
-                tip: '🔴 Password is incorrect.',
+                tip: 'Password is incorrect.',
             })
 
-        // JWT
         const userData = {
-            id: user?.id,
-            email: user?.email,
+            id: user.id,
+            first_name: user.first_name,
+            email: user.email,
         }
         const tokens = setJwtTokens(userData)
-        const { first_name, last_name, email: userEmail, id, role_id } = user
 
         res.status(200)
+            .header('Authorization', tokens.accessToken)
             .cookie('refresh_token', tokens.refreshToken, {
                 httpOnly: true,
             })
@@ -60,12 +60,13 @@ const login = async (req, res) => {
 const refresh = (req, res) => {
     try {
         const refreshToken = req.cookies.refresh_token
+        console.log('r_token_', refreshToken)
 
         if (!refreshToken)
             return res.status(401).json({
                 code: 401,
                 status: 'Unauthorized',
-                message: '🔴 The refresh token is null.',
+                message: 'The refresh token is null.',
             })
 
         const refreshTokenSecret =
@@ -76,23 +77,26 @@ const refresh = (req, res) => {
                 return res.status(403).send({
                     code: 403,
                     status: 'Forbidden',
-                    message: '⛔️ The refresh token is invalid.',
+                    message: 'The refresh token is invalid.',
                 })
 
             const { id, first_name, email } = payload
             const user = { id, first_name, email }
 
-            const tokens = setJwtTokens(user)
-            res.cookie('refresh_token', tokens.refreshToken, {
-                httpOnly: true,
+            const accessToken = setNewAccessToken(user)
+            const tokens = { accessToken, refreshToken }
+
+            res.header('Authorization', accessToken)
+            res.status(200).json({
+                user: { ...user },
+                tokens,
             })
-            res.status(200).json(tokens)
         })
     } catch (error) {
         res.status(401).send({
             code: 401,
             status: 'Unauthorized',
-            message: '🔴 Something went wrong.',
+            message: 'Something went wrong.',
         })
     }
 }
@@ -103,7 +107,7 @@ const logout = (req, res) => {
             return res.status(404).json({
                 code: 404,
                 status: 'Not found',
-                message: '🔴 No user logged in.',
+                message: 'No user logged in.',
             })
         res.clearCookie('refresh_token')
         return res
@@ -113,7 +117,7 @@ const logout = (req, res) => {
         res.status(401).json({
             code: 401,
             status: 'Unauthorized',
-            message: '🔴 Something went wrong.',
+            message: 'Something went wrong.',
         })
     }
 }
