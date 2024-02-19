@@ -60,7 +60,6 @@ const login = async (req, res) => {
 const refresh = (req, res) => {
     try {
         const refreshToken = req.cookies.refresh_token
-        console.log('r_token_', req.cookies)
 
         if (!refreshToken)
             return res.status(401).json({
@@ -74,9 +73,9 @@ const refresh = (req, res) => {
 
         jwt.verify(refreshToken, refreshTokenSecret, (error, payload) => {
             if (error)
-                return res.status(403).send({
-                    code: 403,
-                    status: 'Forbidden',
+                return res.status(401).send({
+                    code: 401,
+                    status: 'Unauthorized',
                     message: 'The refresh token is invalid.',
                 })
 

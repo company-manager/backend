@@ -2,10 +2,10 @@ import jwt from 'jsonwebtoken'
 import { JwtConfigType, UserType } from './types'
 
 const { REFRESH_TOKEN_SECRET, ACCESS_TOKEN_SECRET } = process.env
-const ACCESS_TOKEN_CONFIG: JwtConfigType = { expiresIn: '2s' }
-const REFRESH_TOKEN_CONFIG: JwtConfigType = { expiresIn: '30s' }
-const refreshTokenSecret = REFRESH_TOKEN_SECRET || 'refresh_token_secret'
+const ACCESS_TOKEN_CONFIG: JwtConfigType = { expiresIn: '15m' }
+const REFRESH_TOKEN_CONFIG: JwtConfigType = { expiresIn: '1d' }
 const accessTokenSecret = ACCESS_TOKEN_SECRET || 'access_token_secret'
+const refreshTokenSecret = REFRESH_TOKEN_SECRET || 'refresh_token_secret'
 
 const setNewAccessToken = (user: UserType) => {
     const accessToken = jwt.sign(user, accessTokenSecret, ACCESS_TOKEN_CONFIG)
