@@ -29,7 +29,7 @@ app.get('/api', (req, res) =>
 )
 
 app.use('/api/v1/roles', authenticateToken, rolesRouter)
-app.use('/api/v1/users', authenticateToken, usersRouter)
+app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/auth', authRouter)
 
 app.listen(PORT, () => console.log(`🚀 Server is running on port ${PORT}`))
