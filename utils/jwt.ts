@@ -3,7 +3,7 @@ import { JwtConfigType, UserType } from './types'
 
 const { REFRESH_TOKEN_SECRET, ACCESS_TOKEN_SECRET } = process.env
 const ACCESS_TOKEN_CONFIG: JwtConfigType = { expiresIn: '15m' }
-const REFRESH_TOKEN_CONFIG: JwtConfigType = { expiresIn: '1d' }
+const REFRESH_TOKEN_CONFIG: JwtConfigType = { expiresIn: '15d' }
 const accessTokenSecret = ACCESS_TOKEN_SECRET || 'access_token_secret'
 const refreshTokenSecret = REFRESH_TOKEN_SECRET || 'refresh_token_secret'
 

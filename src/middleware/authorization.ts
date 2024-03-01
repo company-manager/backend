@@ -19,7 +19,6 @@ const authenticateToken = (req, res, next) => {
         process.env.ACCESS_TOKEN_SECRET || 'access_token_secret'
 
     jwt.verify(token, accessTokenSecret, (error) => {
-        console.log(error)
         if (error) {
             return res.status(401).json({
                 code: 401,
