@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express'
 import usersRouter from '@src/v1/routes/users.routes'
 import rolesRouter from '@src/v1/routes/roles.routes'
 import authRouter from '@src/v1/routes/auth.routes'
+import companiesRouter from '@src/v1/routes/companies.routes'
 import emailMiddleware from '@middleware/email'
 import { authenticateToken } from '@middleware/authorization'
 import swaggerConfig from '@src/swagger.json'
@@ -29,7 +30,8 @@ app.get('/api', (req, res) =>
 )
 
 app.use('/api/v1/roles', authenticateToken, rolesRouter)
-app.use('/api/v1/users', usersRouter)
+app.use('/api/v1/users', authenticateToken, usersRouter)
+app.use('/api/v1/companies', companiesRouter)
 app.use('/api/v1/auth', authRouter)
 
 app.listen(PORT, () => console.log(`🚀 Server is running on port ${PORT}`))
