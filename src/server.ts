@@ -5,6 +5,7 @@ import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import usersRouter from '@src/v1/routes/users.routes'
 import rolesRouter from '@src/v1/routes/roles.routes'
+import clientsRouter from '@src/v1/routes/clients.routes'
 import authRouter from '@src/v1/routes/auth.routes'
 import companiesRouter from '@src/v1/routes/companies.routes'
 import emailMiddleware from '@middleware/email'
@@ -31,6 +32,7 @@ app.get('/api', (req, res) =>
 
 app.use('/api/v1/roles', authenticateToken, rolesRouter)
 app.use('/api/v1/users', authenticateToken, usersRouter)
+app.use('/api/v1/clients', clientsRouter)
 app.use('/api/v1/companies', companiesRouter)
 app.use('/api/v1/auth', authRouter)
 
