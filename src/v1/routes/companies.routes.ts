@@ -3,9 +3,8 @@ import companyControllers from '@controllers-V1/companies.controllers'
 
 const router = Router()
 
+router.post('/', companyControllers.add)
 router.get('/:id', companyControllers.getById)
-// .post('/', usersControllers.add)
-// .delete('/:id', usersControllers.remove)
-// .patch('/:id', usersControllers.update)
+router.delete('/:id', companyControllers.remove)
 
 export default router

@@ -30,4 +30,11 @@ type UserUpdate = {
     role_id?: number
 }
 
-export { HttpCallback, Role, User, UserUpdate }
+type Company = {
+    id?: string
+    created_at?: string
+    company_name: string
+    taxpayer_id: string
+}
+
+export { Company, HttpCallback, Role, User, UserUpdate }
