@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+
 import { Request, Response } from 'express'
 import usersServices from '@services-V1/users.services'
 import responses from '@helpers/responses'
@@ -48,7 +49,7 @@ const add = async (req: Request, res: Response) => {
 
         const results = await usersServices.add(req.body.user)
 
-        return res.status(201).send({
+        return res.status(201).json({
             ...responses.created,
             message: '🟢 User created',
             results,
