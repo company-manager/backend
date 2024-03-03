@@ -45,6 +45,7 @@ const login = async (req, res) => {
 
         res.status(200)
             .header('Authorization', tokens.accessToken)
+            .cookie('company_id', user.company_id, { httpOnly: true })
             .cookie('refresh_token', tokens.refreshToken, {
                 httpOnly: true,
             })

@@ -20,6 +20,7 @@ type User = {
     email: string
     user_password: string
     role_id: number
+    company_id: string
 }
 
 type UserUpdate = {
