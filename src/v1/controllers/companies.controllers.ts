@@ -10,8 +10,6 @@ const getById = async (req: Request, res: Response) => {
         const id = req.params.id
         const results = await companiesServices.getById(id)
 
-        console.log(results)
-
         if (!results)
             return res.status(404).json({
                 ...responses.notFound,

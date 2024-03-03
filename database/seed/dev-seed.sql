@@ -22,7 +22,7 @@ CREATE TABLE company_client (
     client_id uuid,
     PRIMARY KEY (company_id, client_id),
     CONSTRAINT fk_company FOREIGN KEY(company_id) REFERENCES companies(id),
-    CONSTRAINT fk_client FOREIGN KEY(client_id) REFERENCES clients(id)
+    CONSTRAINT fk_client FOREIGN KEY(client_id) REFERENCES clients(id) ON DELETE CASCADE
 );
 
 CREATE TABLE users (
@@ -61,8 +61,8 @@ VALUES
 
 INSERT INTO users (first_name, last_name, email, user_password, role_id, company_id) 
 VALUES 
-('John', 'Doe', 'john@email.com', crypt('a1b2d3', gen_salt('bf')), 1, (SELECT id FROM companies WHERE taxpayer_id='500123098')), 
-('Jane', 'Doe', 'jane@email.com', crypt('asdef12345', gen_salt('bf')), 3, (SELECT id FROM companies WHERE taxpayer_id='522373689'));
+('John', 'Doe', 'john@email.com', crypt('12345', gen_salt('bf')), 1, (SELECT id FROM companies WHERE taxpayer_id='552309128')), 
+('Jane', 'Doe', 'jane@email.com', crypt('asdfg', gen_salt('bf')), 3, (SELECT id FROM companies WHERE taxpayer_id='522373689'));
 
 INSERT INTO company_client (company_id, client_id) 
 VALUES
