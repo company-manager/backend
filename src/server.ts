@@ -32,7 +32,7 @@ app.get('/api', (req, res) =>
 
 app.use('/api/v1/roles', authenticateToken, rolesRouter)
 app.use('/api/v1/users', authenticateToken, usersRouter)
-app.use('/api/v1/clients', clientsRouter)
+app.use('/api/v1/clients', authenticateToken, clientsRouter)
 app.use('/api/v1/companies', companiesRouter)
 app.use('/api/v1/auth', authRouter)
 

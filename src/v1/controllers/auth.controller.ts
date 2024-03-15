@@ -30,6 +30,7 @@ const login = async (req, res) => {
             password,
             user.user_password,
         )
+
         if (!isPasswordCorrect)
             return res.status(401).json({
                 ...responses.unauthorized,
