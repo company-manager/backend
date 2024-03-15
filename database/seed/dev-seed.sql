@@ -3,18 +3,6 @@ DROP TABLE IF EXISTS projects, roles, users, companies, clients, company_client,
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TABLE roles (
-    id SERIAL NOT NULL PRIMARY KEY,
-    created_at TIMESTAMP DEFAULT current_timestamp,
-    role_name VARCHAR(55) UNIQUE NOT NULL
-);
-
-CREATE TABLE status (
-    id SERIAL NOT NULL PRIMARY KEY,
-    created_at TIMESTAMP DEFAULT current_timestamp,
-    status_name VARCHAR(25) UNIQUE NOT NULL
-);
-
 CREATE TABLE companies (
     id uuid NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
     created_at TIMESTAMP DEFAULT current_timestamp,
@@ -45,9 +33,7 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     user_password TEXT NOT NULL,
     role_id INT,
-    company_id uuid,
-    CONSTRAINT fk_role FOREIGN KEY(role_id) REFERENCES roles(id),
-    CONSTRAINT fk_company FOREIGN KEY(company_id) REFERENCES companies(id)
+    company_id uuid
 );
 
 CREATE TABLE projects (
@@ -58,22 +44,8 @@ CREATE TABLE projects (
     status_id INT,
     responsible_id uuid,
     CONSTRAINT fk_client FOREIGN KEY(client_id) REFERENCES clients(id),
-    CONSTRAINT fk_status FOREIGN KEY(status_id) REFERENCES status(id),
     CONSTRAINT fk_users FOREIGN KEY(responsible_id) REFERENCES users(id)
 );
-
-INSERT INTO roles (role_name) 
-VALUES 
-('Editor'), 
-('Admin'), 
-('User');
-
-INSERT INTO status (status_name) 
-VALUES 
-('Em progresso'), 
-('Parado'), 
-('Pendente'), 
-('Terminado');
 
 INSERT INTO companies (company_name, taxpayer_id) 
 VALUES 
