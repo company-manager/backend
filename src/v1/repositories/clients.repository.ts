@@ -4,18 +4,18 @@ import clientsQueries from '@queries-V1/clients.queries'
 
 type ClientData = {
     name: string
-    taxpayer_id: string
+    companyId: string
+    taxpayer_id?: string
+    address_1?: string
+    address_2?: string
+    city?: string
+    country?: string
+    phone_1?: string
+    phone_2?: string
 }
 
-const getAll = async () => {
-    const results = await pool.query(clientsQueries.getAll)
-    return results?.rows
-}
-
-const getAllByCompany = async (companyId: string) => {
-    const results = await pool.query(clientsQueries.getManyByCompany, [
-        companyId,
-    ])
+const getAll = async (companyId: string) => {
+    const results = await pool.query(clientsQueries.getAll, [companyId])
     return results?.rows
 }
 
@@ -25,7 +25,7 @@ const getById = async (companyId: string, clientId: string) => {
         clientId,
     ])
 
-    return results?.rows?.[0]
+    return results?.rows?.[0] || []
 }
 
 const remove = async (companyId: string, clientId: string) => {
@@ -36,45 +36,80 @@ const remove = async (companyId: string, clientId: string) => {
     return results?.rows?.[0]
 }
 
-const add = async (data: ClientData) => {
-    const { name, taxpayer_id } = data
-    const results = await pool.query(clientsQueries.add, [name, taxpayer_id])
-    return results?.rows?.[0]
-}
-
-const addRelationWithCompany = async (companyId: string, clientId: string) => {
-    const results = await pool.query(clientsQueries.addToJunction, [
-        companyId,
-        clientId,
-    ])
-
-    return results?.rows?.[0]
-}
-
-const getByTaxpayerId = async (taxpayerId: string) => {
+const getByTaxpayerId = async (companyId: string, taxpayerId: string) => {
     const results = await pool.query(clientsQueries.getByTaxpayerId, [
+        companyId,
         taxpayerId,
     ])
 
+    console.log('_results', results)
+
     return results?.rows?.[0]
 }
 
-const getRelation = async (companyId: string, clientId: string) => {
-    const results = await pool.query(clientsQueries.getRelation, [
+const add = async (data: ClientData) => {
+    const {
+        name,
         companyId,
-        clientId,
+        taxpayer_id,
+        address_1,
+        address_2,
+        city,
+        country,
+        phone_1,
+        phone_2,
+    } = data
+    const results = await pool.query(clientsQueries.add, [
+        name,
+        companyId,
+        taxpayer_id,
+        address_1,
+        address_2,
+        city,
+        country,
+        phone_1,
+        phone_2,
     ])
 
-    return results?.rows
+    return results?.rows?.[0]
+}
+
+const update = async (
+    companyId: string,
+    clientId: string,
+    data: Partial<ClientData>,
+) => {
+    const {
+        name,
+        taxpayer_id,
+        address_1,
+        address_2,
+        city,
+        country,
+        phone_1,
+        phone_2,
+    } = data
+    const results = await pool.query(clientsQueries.update, [
+        companyId,
+        clientId,
+        name,
+        taxpayer_id,
+        address_1,
+        address_2,
+        city,
+        country,
+        phone_1,
+        phone_2,
+    ])
+
+    return results.rows[0]
 }
 
 export default {
     getAll,
     getById,
-    getAllByCompany,
     getByTaxpayerId,
-    getRelation,
     remove,
     add,
-    addRelationWithCompany,
+    update,
 }

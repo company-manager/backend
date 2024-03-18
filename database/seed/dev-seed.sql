@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS projects, roles, users, companies, clients, company_client, status CASCADE;
+DROP TABLE IF EXISTS projects, users, companies, clients CASCADE;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
@@ -43,7 +43,7 @@ CREATE TABLE projects (
     client_id uuid,
     status_id INT,
     responsible_id uuid,
-    CONSTRAINT fk_client FOREIGN KEY(client_id) REFERENCES clients(id),
+    CONSTRAINT fk_client FOREIGN KEY(client_id) REFERENCES clients(client_id),
     CONSTRAINT fk_users FOREIGN KEY(responsible_id) REFERENCES users(id)
 );
 
@@ -56,6 +56,7 @@ VALUES
 INSERT INTO clients (name, taxpayer_id, company_id) 
 VALUES 
 ('Client 01', '234567890', (SELECT id FROM companies WHERE taxpayer_id='500123098')), 
+('Client 01', '234567890', (SELECT id FROM companies WHERE taxpayer_id='522373689')), 
 ('Client 02', '103678932', (SELECT id FROM companies WHERE taxpayer_id='552309128')), 
 ('Client 03', '139087645', (SELECT id FROM companies WHERE taxpayer_id='552309128')); 
 
@@ -64,7 +65,7 @@ VALUES
 ('John', 'Doe', 'john@email.com', crypt('12345', gen_salt('bf')), 1, (SELECT id FROM companies WHERE taxpayer_id='552309128')), 
 ('Jane', 'Doe', 'jane@email.com', crypt('asdfg', gen_salt('bf')), 3, (SELECT id FROM companies WHERE taxpayer_id='522373689'));
 
-INSERT INTO projects (project_name, status_id, client_id, responsible_id) 
-VALUES
-('Project 01', 1, (SELECT id FROM clients WHERE taxpayer_id='103678932'), (SELECT id FROM users WHERE first_name='John')), 
-('Project 02', 3, (SELECT id FROM clients WHERE taxpayer_id='234567890'), (SELECT id FROM users WHERE first_name='Jane'));
+-- INSERT INTO projects (project_name, status_id, client_id, responsible_id) 
+-- VALUES
+-- ('Project 01', 1, (SELECT client_id FROM clients WHERE taxpayer_id='103678932'), (SELECT id FROM users WHERE first_name='John')), 
+-- ('Project 02', 3, (SELECT client_id FROM clients WHERE taxpayer_id='234567890'), (SELECT id FROM users WHERE first_name='Jane'));
