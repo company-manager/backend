@@ -39,7 +39,42 @@ const remove = async (companyId: string, clientId: string) => {
 const add = async (data: ClientData) => {
     const { name, taxpayer_id } = data
     const results = await pool.query(clientsQueries.add, [name, taxpayer_id])
-    return results
+    return results?.rows?.[0]
 }
 
-export default { getAll, getById, getAllByCompany, remove, add }
+const addRelationWithCompany = async (companyId: string, clientId: string) => {
+    const results = await pool.query(clientsQueries.addToJunction, [
+        companyId,
+        clientId,
+    ])
+
+    return results?.rows?.[0]
+}
+
+const getByTaxpayerId = async (taxpayerId: string) => {
+    const results = await pool.query(clientsQueries.getByTaxpayerId, [
+        taxpayerId,
+    ])
+
+    return results?.rows?.[0]
+}
+
+const getRelation = async (companyId: string, clientId: string) => {
+    const results = await pool.query(clientsQueries.getRelation, [
+        companyId,
+        clientId,
+    ])
+
+    return results?.rows
+}
+
+export default {
+    getAll,
+    getById,
+    getAllByCompany,
+    getByTaxpayerId,
+    getRelation,
+    remove,
+    add,
+    addRelationWithCompany,
+}
