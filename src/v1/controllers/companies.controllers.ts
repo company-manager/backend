@@ -4,7 +4,7 @@ import responses from '@src/helpers/responses'
 import { Request, Response } from 'express'
 import companiesServices from '@services-V1/companies.services'
 import { Company } from '@global-types/index'
-import { rolesMapping } from '@utils/index'
+import { isAdmin } from '@utils/index'
 
 const getById = async (req: Request, res: Response) => {
     try {
@@ -14,7 +14,7 @@ const getById = async (req: Request, res: Response) => {
         if (!results)
             return res.status(404).json({
                 ...responses.notFound,
-                message: '🔴 Company not found',
+                message: 'Company not found',
             })
 
         return res.status(200).json({ ...responses.ok, results })
@@ -26,13 +26,13 @@ const getById = async (req: Request, res: Response) => {
     }
 }
 
-const add = async (req: Request, res: Response) => {
+const create = async (req: Request, res: Response) => {
     try {
         const { taxpayer_id } = req.body?.company
-        const doesCompanyAlreadyExists =
+        const companyAlreadyExists =
             await companiesServices.getByTaxpayerId(taxpayer_id)
 
-        if (doesCompanyAlreadyExists) {
+        if (companyAlreadyExists) {
             return res.status(403).json({
                 ...responses.forbidden,
                 message: 'Taxpayer id already in use',
@@ -45,14 +45,14 @@ const add = async (req: Request, res: Response) => {
             taxpayer_id,
         }
 
-        const results = await companiesServices.add(newCompany)
+        const results = await companiesServices.create(newCompany)
 
         return res
             .status(200)
             .json({ ...responses.created, message: 'Company created', results })
     } catch (error) {
         return res
-            .status(404)
+            .status(401)
             .json({ ...responses.unauthorized, results: error })
     }
 }
@@ -62,11 +62,7 @@ const remove = async (req: Request, res: Response) => {
         const { id } = req.params
         const { id: userId } = req.body.user
         const { error, result } = await userService.getById(userId)
-        console.log('_userId', userId, !!userId)
-        console.log('_error', error, !error)
-        console.log('_result', result)
         const isUserValid = !!userId && !error
-        console.log('_isUserValid', isUserValid)
         const company = await companiesServices.getById(id)
 
         if (!isUserValid) {
@@ -86,11 +82,10 @@ const remove = async (req: Request, res: Response) => {
         if (result) {
             const role = result.role_id
             const companyId = result.company_id
-            const isAdmin =
-                rolesMapping[`${role}`] === rolesMapping['1'] &&
-                companyId === id
+            const isSameCompany = companyId === id
+            const hasAdminPermissions = isAdmin(role) && isSameCompany
 
-            if (isAdmin) {
+            if (hasAdminPermissions) {
                 const results = await companiesServices.remove(id)
                 return res.status(200).json({
                     ...responses.ok,
@@ -112,4 +107,4 @@ const remove = async (req: Request, res: Response) => {
     }
 }
 
-export default { add, getById, remove }
+export default { create, getById, remove }

@@ -4,10 +4,8 @@ import { authenticateToken } from '@src/middleware/authorization'
 
 const router = Router()
 
-router.post('/', companyControllers.add)
-router.get('/:id', companyControllers.getById)
-
-// TODO: check if user who's trying to delete company has admin role
+router.post('/', companyControllers.create)
+router.get('/:id', authenticateToken, companyControllers.getById)
 router.delete('/:id', authenticateToken, companyControllers.remove)
 
 export default router
