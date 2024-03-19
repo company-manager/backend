@@ -22,7 +22,7 @@ CREATE TABLE clients (
     country VARCHAR(55),
     phone_1 VARCHAR(55),
     phone_2 VARCHAR(55),
-    CONSTRAINT fk_company FOREIGN KEY(company_id) REFERENCES companies(id)
+    CONSTRAINT fk_company FOREIGN KEY(company_id) REFERENCES companies(id) ON DELETE CASCADE
 );
 
 CREATE TABLE users (
@@ -33,7 +33,8 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     user_password TEXT NOT NULL,
     role_id INT,
-    company_id uuid
+    company_id uuid,
+    CONSTRAINT fk_company FOREIGN KEY(company_id) REFERENCES companies(id) ON DELETE CASCADE
 );
 
 CREATE TABLE projects (

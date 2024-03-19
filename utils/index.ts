@@ -1,3 +1,9 @@
+const rolesMapping = {
+    1: 'Admin',
+    2: 'User',
+    3: 'Guest',
+}
+
 const isPostmanVariable = (token: string): boolean =>
     !!process.env.NODE_ENV && token?.startsWith('{{')
 
@@ -17,4 +23,4 @@ const isEmpty = (data: Data): boolean => {
     }
 }
 
-export { isPostmanVariable, isEmpty }
+export { rolesMapping, isPostmanVariable, isEmpty }
