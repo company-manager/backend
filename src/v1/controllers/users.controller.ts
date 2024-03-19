@@ -24,7 +24,7 @@ const getById = async (req: Request, res: Response) => {
         if (!results)
             return res.status(404).json({
                 ...responses.notFound,
-                message: '🔴 Parameter id not found',
+                message: 'Id not found',
             })
 
         return res.status(200).json({ ...responses.ok, results })
@@ -35,7 +35,7 @@ const getById = async (req: Request, res: Response) => {
     }
 }
 
-const add = async (req: Request, res: Response) => {
+const create = async (req: Request, res: Response) => {
     try {
         const { email } = req.body.user
         const isEmailAlreadyTaken = await usersServices.getByEmail(email)
@@ -43,15 +43,15 @@ const add = async (req: Request, res: Response) => {
         if (isEmailAlreadyTaken) {
             return res.status(403).json({
                 ...responses.forbidden,
-                message: `🔴 Email ${email} already taken`,
+                message: `Email ${email} already taken`,
             })
         }
 
-        const results = await usersServices.add(req.body.user)
+        const results = await usersServices.create(req.body.user)
 
         return res.status(201).json({
             ...responses.created,
-            message: '🟢 User created',
+            message: 'User created',
             results,
         })
     } catch (error) {
@@ -69,14 +69,14 @@ const remove = async (req: Request, res: Response) => {
         if (!isIdValid) {
             return res.status(403).json({
                 ...responses.forbidden,
-                message: "🔴 User doesn't exists",
+                message: "User doesn't exists",
             })
         }
 
         const results = await usersServices.remove(id)
         res.status(200).send({
             ...responses.ok,
-            message: `🟢 User ${id} deleted`,
+            message: `User ${id} deleted`,
             results,
         })
     } catch (error) {
@@ -94,14 +94,14 @@ const update = async (req: Request, res: Response) => {
         if (!hasData) {
             return res.status(400).send({
                 ...responses.badRequest,
-                message: '🔴 Request body must include user data.',
+                message: 'Request body must include user data.',
             })
         }
 
         const results = await usersServices.update(id, req?.body?.user)
         res.status(200).send({
             ...responses.ok,
-            message: '🟢 User updated',
+            message: 'User updated',
             results,
         })
     } catch (error) {
@@ -111,4 +111,4 @@ const update = async (req: Request, res: Response) => {
     }
 }
 
-export default { getAll, getById, add, update, remove }
+export default { getAll, getById, create, update, remove }
