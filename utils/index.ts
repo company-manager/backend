@@ -23,4 +23,7 @@ const isEmpty = (data: Data): boolean => {
     }
 }
 
-export { rolesMapping, isPostmanVariable, isEmpty }
+const isAdmin = (roleId: number): boolean =>
+    rolesMapping[`${roleId}`] === rolesMapping['1']
+
+export { rolesMapping, isPostmanVariable, isEmpty, isAdmin }

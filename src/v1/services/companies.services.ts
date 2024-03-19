@@ -1,8 +1,8 @@
 import { Company } from '@global-types/index'
 import companiesRepository from '@repositories-V1/companies.repository'
 
-const add = (company: Company) => {
-    const results = companiesRepository.add(company)
+const create = (company: Company) => {
+    const results = companiesRepository.create(company)
     return results
 }
 
@@ -21,4 +21,4 @@ const remove = (id: string) => {
     return results
 }
 
-export default { add, getById, getByTaxpayerId, remove }
+export default { create, getById, getByTaxpayerId, remove }

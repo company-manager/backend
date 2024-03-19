@@ -4,9 +4,9 @@ import pool from '@database/index'
 import { Company } from '@global-types/index'
 import companiesQueries from '@queries-V1/companies.queries'
 
-const add = async (company: Company): Promise<Company> => {
+const create = async (company: Company): Promise<Company> => {
     const { company_name, taxpayer_id } = company
-    const results = await pool.query(companiesQueries.add, [
+    const results = await pool.query(companiesQueries.create, [
         company_name,
         taxpayer_id,
     ])
@@ -29,4 +29,4 @@ const remove = async (id: string): Promise<Company> => {
     return results?.rows?.[0]
 }
 
-export default { getById, getByTaxpayerId, add, remove }
+export default { getById, getByTaxpayerId, create, remove }

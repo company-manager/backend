@@ -12,7 +12,7 @@ const authenticateToken = (req, res, next) => {
         return res.status(403).json({
             code: 403,
             status: 'Forbidden',
-            message: '🔴 The authentication token is null.',
+            message: 'The authentication token is null.',
         })
 
     const accessTokenSecret =
@@ -23,7 +23,7 @@ const authenticateToken = (req, res, next) => {
             return res.status(401).json({
                 code: 401,
                 status: 'Unauthorized',
-                message: '🔴 The authentication token is invalid.',
+                message: 'The authentication token is invalid.',
             })
         }
 
