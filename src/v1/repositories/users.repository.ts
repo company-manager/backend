@@ -1,5 +1,5 @@
 import pool from '@database/.'
-import { User, UserUpdate } from '@global-types/index'
+import { User, UserUpdate } from '@global-types/.'
 import usersQueries from '@src/v1/queries/users.queries'
 
 const DEFAULT_ROLE_ID = 3
@@ -9,9 +9,15 @@ const getAll = async (): Promise<User[]> => {
     return results?.rows
 }
 
-const getById = async (id: string): Promise<User> => {
-    const results = await pool.query(usersQueries.getById, [id])
-    return results?.rows?.[0]
+const getById = async (id: string) => {
+    try {
+        const results = await pool.query(usersQueries.getById, [id])
+        const result: User = results?.rows?.[0]
+        return { result }
+    } catch (e) {
+        const error = { message: 'Invalid id', error: e }
+        return { error }
+    }
 }
 
 const getByEmail = async (email: string): Promise<User | undefined> => {

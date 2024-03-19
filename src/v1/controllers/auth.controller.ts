@@ -43,7 +43,7 @@ const login = async (req, res) => {
             email: user.email,
         }
         const tokens = setJwtTokens(userData)
-        const { first_name, last_name, email: userEmail, id, role_id } = user
+        const { id, company_id } = user
 
         res.status(200)
             .header('Authorization', tokens.accessToken)
@@ -52,7 +52,8 @@ const login = async (req, res) => {
                 httpOnly: true,
             })
             .json({
-                user: { id, email: userEmail, first_name, last_name, role_id },
+                company: { id: company_id },
+                user: { id },
                 tokens,
             })
     } catch (error) {

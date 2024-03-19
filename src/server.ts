@@ -4,7 +4,6 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import usersRouter from '@src/v1/routes/users.routes'
-import rolesRouter from '@src/v1/routes/roles.routes'
 import clientsRouter from '@src/v1/routes/clients.routes'
 import authRouter from '@src/v1/routes/auth.routes'
 import companiesRouter from '@src/v1/routes/companies.routes'
@@ -30,7 +29,6 @@ app.get('/api', (req, res) =>
     res.status(200).json({ message: '👋 Welcome to server' }),
 )
 
-app.use('/api/v1/roles', authenticateToken, rolesRouter)
 app.use('/api/v1/users', authenticateToken, usersRouter)
 app.use('/api/v1/clients', authenticateToken, clientsRouter)
 app.use('/api/v1/companies', companiesRouter)
