@@ -25,8 +25,8 @@ const getByEmail = async (email: string): Promise<User | undefined> => {
     return results?.rows?.[0]
 }
 
-const add = async (user: User) => {
-    const results = await pool.query(usersQueries.add, [
+const create = async (user: User) => {
+    const results = await pool.query(usersQueries.create, [
         user.first_name,
         user.last_name,
         user.email,
@@ -53,4 +53,4 @@ const update = async (id: string, data: UserUpdate): Promise<UserUpdate> => {
     return results?.rows?.[0]
 }
 
-export default { getAll, getById, getByEmail, add, remove, update }
+export default { getAll, getById, getByEmail, create, remove, update }

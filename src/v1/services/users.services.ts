@@ -17,9 +17,9 @@ const getByEmail = (email: string) => {
     return results
 }
 
-const add = (data: User) => {
+const create = (data: User) => {
     // TODO: Validate data such as email
-    const results = usersRepository.add(data)
+    const results = usersRepository.create(data)
     return results
 }
 
@@ -34,4 +34,4 @@ const update = (id: string, data: UserUpdate) => {
     return results
 }
 
-export default { getAll, getById, getByEmail, add, remove, update }
+export default { getAll, getById, getByEmail, create, remove, update }
