@@ -17,7 +17,7 @@ transporter.verify((error) => {
             '🚨 Check email and password provided in /src/middleware/email.ts',
         )
     } else {
-        console.log('🔥 Server is ready to take our messages')
+        console.log('🌱 Server is ready to take our messages')
     }
 })
 

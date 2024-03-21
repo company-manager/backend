@@ -7,9 +7,7 @@ const rolesMapping = {
 const isPostmanVariable = (token: string): boolean =>
     !!process.env.NODE_ENV && token?.startsWith('{{')
 
-type Data = string | [] | object
-
-const isEmpty = (data: Data): boolean => {
+const isEmpty = (data: string | [] | object): boolean => {
     if (!data) return true
 
     switch (typeof data) {
