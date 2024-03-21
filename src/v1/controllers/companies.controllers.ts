@@ -27,6 +27,13 @@ const getById = async (req: Request, res: Response) => {
 }
 
 const create = async (req: Request, res: Response) => {
+    if (req.cookies.company_id) {
+        return res.status(403).json({
+            ...responses.forbidden,
+            message: 'You have no permission to add a new company',
+        })
+    }
+
     try {
         const { taxpayer_id } = req.body?.company
         const companyAlreadyExists =

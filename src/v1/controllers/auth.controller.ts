@@ -116,6 +116,7 @@ const logout = (req, res) => {
                 message: 'No user logged in.',
             })
         res.clearCookie('refresh_token')
+        res.clearCookie('company_id')
         return res
             .status(200)
             .json({ code: 200, status: 'OK', message: '👋 User logged out.' })
