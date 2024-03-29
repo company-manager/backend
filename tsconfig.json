@@ -6,6 +6,7 @@
     "baseUrl": "./",
     "paths": {
       "@src/*": ["src/*"],
+      "@emails/*": ["emails/*"],
       "@database/*": ["database/*"],
       "@queries-V1/*": ["src/v1/queries/*"],
       "@controllers-V1/*": ["src/v1/controllers/*"],

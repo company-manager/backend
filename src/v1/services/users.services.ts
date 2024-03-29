@@ -1,37 +1,67 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { User } from '@global-types/.'
 import usersRepository from '@repositories-V1/users.repository'
-import { User, UserUpdate } from '@global-types/.'
+import { generateToken } from '@utils/index'
+import { Params } from '@utils/params'
 
-const getAll = () => {
-    const results = usersRepository.getAll()
+const getAll = async (companyId: string, queryParams: Params) => {
+    const results = await usersRepository.getAll(companyId, queryParams)
     return results
 }
 
-const getById = (id: string) => {
-    const results = usersRepository.getById(id)
+const getById = async (companyId: string, userId: string) => {
+    const results = await usersRepository.getById(companyId, userId)
     return results
 }
 
-const getByEmail = (email: string) => {
-    const results = usersRepository.getByEmail(email)
+const getByEmail = async (email: string) => {
+    const results = await usersRepository.getByEmail(email)
     return results
 }
 
-const create = (data: User) => {
-    // TODO: Validate data such as email
-    const results = usersRepository.create(data)
+const verifyById = async (userId: string) => {
+    const results = await usersRepository.verifyById(userId)
     return results
 }
 
-const remove = (id: string) => {
-    const results = usersRepository.remove(id)
+const create = async (
+    companyId: string,
+    data: Omit<User, 'id' | 'company_id'>,
+) => {
+    const token = generateToken()
+    const results = await usersRepository.create(companyId, {
+        ...data,
+        verification_token: token,
+    })
     return results
 }
 
-const update = (id: string, data: UserUpdate) => {
-    // TODO: Validate data
-    const results = usersRepository.update(id, data)
+const update = async (
+    companyId: string,
+    userId: string,
+    data: Partial<User>,
+) => {
+    const results = await usersRepository.update(companyId, userId, data)
     return results
 }
 
-export default { getAll, getById, getByEmail, create, remove, update }
+const updateById = async (userId: string, data: Partial<User>) => {
+    const results = await usersRepository.updateById(userId, data)
+    return results
+}
+
+const remove = async (companyId: string, userId: string) => {
+    const results = await usersRepository.remove(companyId, userId)
+    return results
+}
+
+export default {
+    getAll,
+    getById,
+    getByEmail,
+    verifyById,
+    create,
+    update,
+    updateById,
+    remove,
+}

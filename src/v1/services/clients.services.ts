@@ -1,16 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Client } from '@global-types/index'
 import clientsRepository from '@repositories-V1/clients.repository'
-
-type ClientData = {
-    name: string
-    taxpayer_id?: string
-    address_1?: string
-    address_2?: string
-    city?: string
-    country?: string
-    phone_1?: string
-    phone_2?: string
-}
 
 const getAll = (companyId: string) => {
     const results = clientsRepository.getAll(companyId)
@@ -27,24 +17,19 @@ const getByTaxpayerId = (companyId: string, taxpayerId: string) => {
     return results
 }
 
+const create = (companyId: string, data: Omit<Client, 'id' | 'company_id'>) => {
+    const results = clientsRepository.create(companyId, data)
+    return results
+}
+
+const update = (companyId: string, clientId: string, data: Partial<Client>) => {
+    const results = clientsRepository.update(companyId, clientId, data)
+    return results
+}
+
 const remove = (companyId: string, clientId: string) => {
     const results = clientsRepository.remove(companyId, clientId)
     return results
 }
 
-const add = (clientData: ClientData, companyId: string) => {
-    const data = { ...clientData, companyId }
-    const results = clientsRepository.add(data)
-    return results
-}
-
-const update = async (
-    companyId: string,
-    clientId: string,
-    data: Partial<ClientData>,
-) => {
-    const results = await clientsRepository.update(companyId, clientId, data)
-    return results
-}
-
-export default { getAll, getById, getByTaxpayerId, remove, add, update }
+export default { getAll, getById, getByTaxpayerId, create, update, remove }

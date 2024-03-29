@@ -1,23 +1,23 @@
 import { Company } from '@global-types/index'
 import companiesRepository from '@repositories-V1/companies.repository'
 
-const create = (company: Company) => {
-    const results = companiesRepository.create(company)
+const create = async (data: Omit<Company, 'id'>) => {
+    const results = await companiesRepository.create(data)
     return results
 }
 
-const getById = (id: string) => {
-    const results = companiesRepository.getById(id)
+const getById = async (companyId: string) => {
+    const results = await companiesRepository.getById(companyId)
     return results
 }
 
-const getByTaxpayerId = (id: string) => {
-    const results = companiesRepository.getByTaxpayerId(id)
+const getByTaxpayerId = async (id: string) => {
+    const results = await companiesRepository.getByTaxpayerId(id)
     return results
 }
 
-const remove = (id: string) => {
-    const results = companiesRepository.remove(id)
+const remove = async (id: string) => {
+    const results = await companiesRepository.remove(id)
     return results
 }
 

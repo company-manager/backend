@@ -1,7 +1,10 @@
+import { NextFunction, Request, Response } from 'express'
 import nodemailer from 'nodemailer'
 import cors from 'cors'
+import moreInfoEmail from '@emails/more-info'
+import { SUPPORT_EMAIL } from '@emails/list'
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
     host: 'smtp0001.neo.space',
     port: 465,
     secure: true,
@@ -21,38 +24,23 @@ transporter.verify((error) => {
     }
 })
 
-const corsEmail = (req, res, next) => {
+const corsEmail = (req: Request, res: Response, next: NextFunction) => {
     const origin = process.env.API_ORIGIN || 'http://localhost:5173'
-    const corsOptions = {
-        origin,
-    }
+    const corsOptions = { origin }
     cors(corsOptions)
     next()
 }
 
-const send = (req, res) => {
+const send = (req: Request, res: Response) => {
     const email = req.body?.email
     const token = req.headers?.authorization?.split(' ')[1]
-    const origin = process.env.API_ORIGIN || 'http://localhost:3003'
-    const pathToFile = `${origin}/public/more_info.pdf`
 
     const options = {
-        from: 'support@companymanager.space',
+        from: SUPPORT_EMAIL,
         to: email,
-        subject: 'ℹ️ INFO: Company Manager',
-        html: `<div>
-                    <p>Hey 👋🏼</p>
-                    <br>
-                    <p>Obrigado pelo interesse. Em anexo segue o pdf com a apresentação da aplicação de gestão da Company Manager.</p>
-                    <br>
-                    <br>
-                </div>`,
-        attachments: [
-            {
-                filename: 'more_info.pdf',
-                path: pathToFile,
-            },
-        ],
+        subject: moreInfoEmail.subject,
+        html: moreInfoEmail.body,
+        attachments: moreInfoEmail.attachments,
     }
 
     if (!token) return res.status(403).json({ code: 403, message: 'Forbidden' })
@@ -70,6 +58,8 @@ const send = (req, res) => {
             console.log('Email sent: ' + info.response)
             return res.status(200).json({ message: 'Success' })
         })
+    } else {
+        return res.status(400).json({ message: 'Denied' })
     }
 }
 

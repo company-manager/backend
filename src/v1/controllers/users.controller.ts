@@ -1,43 +1,21 @@
 /* eslint-disable camelcase */
-
 import { Request, Response } from 'express'
 import usersServices from '@services-V1/users.services'
 import responses from '@helpers/responses'
+import middlewareUtils from '@utils/middleware/.'
+import { User } from '@global-types/index'
 
-const getAll = async (req: Request, res: Response) => {
-    try {
-        const results = await usersServices.getAll()
-
-        return res.status(200).json({ ...responses.ok, results })
-    } catch (error) {
-        return res
-            .status(401)
-            .json({ ...responses.unauthorized, results: error })
-    }
+const getAll = (req: Request, res: Response) => {
+    middlewareUtils.doGetAll<User>(req, res, usersServices)
 }
 
-const getById = async (req: Request, res: Response) => {
-    try {
-        const id = req.params.id
-        const results = await usersServices.getById(id)
-
-        if (!results)
-            return res.status(404).json({
-                ...responses.notFound,
-                message: 'Id not found',
-            })
-
-        return res.status(200).json({ ...responses.ok, results })
-    } catch (error) {
-        return res
-            .status(401)
-            .json({ ...responses.unauthorized, results: error })
-    }
+const getById = (req: Request, res: Response) => {
+    middlewareUtils.doGetById<User>(req, res, usersServices)
 }
 
 const create = async (req: Request, res: Response) => {
     try {
-        const { email } = req.body.user
+        const { email } = req.body.payload
         const isEmailAlreadyTaken = await usersServices.getByEmail(email)
 
         if (isEmailAlreadyTaken) {
@@ -47,68 +25,22 @@ const create = async (req: Request, res: Response) => {
             })
         }
 
-        const results = await usersServices.create(req.body.user)
-
-        return res.status(201).json({
-            ...responses.created,
-            message: 'User created',
-            results,
-        })
+        middlewareUtils.doCreate<User, 'id' | 'company_id'>(
+            req,
+            res,
+            usersServices,
+        )
     } catch (error) {
-        return res
-            .status(401)
-            .json({ ...responses.unauthorized, results: error })
+        return res.status(500).json({ ...responses.serverError, error })
     }
+}
+
+const update = (req: Request, res: Response) => {
+    middlewareUtils.doUpdate<User>(req, res, usersServices)
 }
 
 const remove = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params
-        const isIdValid = await usersServices.getById(id)
-
-        if (!isIdValid) {
-            return res.status(403).json({
-                ...responses.forbidden,
-                message: "User doesn't exists",
-            })
-        }
-
-        const results = await usersServices.remove(id)
-        res.status(200).send({
-            ...responses.ok,
-            message: `User ${id} deleted`,
-            results,
-        })
-    } catch (error) {
-        return res
-            .status(401)
-            .json({ ...responses.unauthorized, results: error })
-    }
+    middlewareUtils.doRemove<User>(req, res, usersServices)
 }
 
-const update = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params
-        const hasData = req.body.user && Object.keys(req.body.user)?.length > 0
-
-        if (!hasData) {
-            return res.status(400).send({
-                ...responses.badRequest,
-                message: 'Request body must include user data.',
-            })
-        }
-
-        const results = await usersServices.update(id, req?.body?.user)
-        res.status(200).send({
-            ...responses.ok,
-            message: 'User updated',
-            results,
-        })
-    } catch (error) {
-        return res
-            .status(401)
-            .json({ ...responses.unauthorized, results: error })
-    }
-}
-
-export default { getAll, getById, create, update, remove }
+export default { getAll, getById, create, remove, update }

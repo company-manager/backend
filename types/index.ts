@@ -1,41 +1,83 @@
+import { GENERAL_EMAIL, SUPPORT_EMAIL } from '@emails/list'
 import { Request, Response, NextFunction } from 'express'
 
-type HttpCallback = {
+interface HttpCallback {
     req: Request
     res: Response
     next?: NextFunction
 }
 
-type Role = {
+interface Role {
     id: string
     created_at: string
     name: string
 }
 
-type User = {
+interface User {
     id: string
-    created_at: string
+    created_at?: string
     first_name: string
     last_name: string
     email: string
     user_password: string
     role_id: number
     company_id: string
+    is_verified: boolean
+    terms_accepted: boolean
+    verification_token: string
 }
 
-type UserUpdate = {
-    first_name?: string
-    last_name?: string
-    email?: string
-    user_password?: string
-    role_id?: number
-}
-
-type Company = {
-    id?: string
+interface Company {
+    id: string
     created_at?: string
     company_name: string
     taxpayer_id: string
 }
 
-export { Company, HttpCallback, Role, User, UserUpdate }
+interface Attachment {
+    filename: string
+    path: string
+}
+
+type FromEmailAddress = typeof GENERAL_EMAIL | typeof SUPPORT_EMAIL
+
+interface Email {
+    body: string
+    subject: string
+    attachments?: Attachment[]
+    from: FromEmailAddress
+    to: string
+}
+
+interface Client {
+    id: string
+    name: string
+    company_id: string
+    taxpayer_id: string
+    address_1: string
+    address_2: string
+    city: string
+    country: string
+    phone_1: string
+    phone_2: string
+}
+
+interface Project {
+    id: string
+    status_id: number
+    project_name: string
+    company_id: string
+    client_id: string
+    user_id: string
+}
+
+interface Document {
+    id: string
+    edited_at?: string
+    title: string
+    body?: string
+    company_id: string
+    author_id: string
+}
+
+export { Company, HttpCallback, Role, User, Email, Project, Client, Document }
