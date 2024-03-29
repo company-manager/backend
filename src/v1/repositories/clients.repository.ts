@@ -1,39 +1,31 @@
 /* eslint-disable camelcase */
 import pool from '@database/index'
+import { Client } from '@global-types/index'
 import clientsQueries from '@queries-V1/clients.queries'
 
-type ClientData = {
-    name: string
-    companyId: string
-    taxpayer_id?: string
-    address_1?: string
-    address_2?: string
-    city?: string
-    country?: string
-    phone_1?: string
-    phone_2?: string
-}
-
 const getAll = async (companyId: string) => {
-    const results = await pool.query(clientsQueries.getAll, [companyId])
-    return results?.rows
+    try {
+        const result = await pool.query(clientsQueries.getAll, [companyId])
+        const results: Client[] = result?.rows
+
+        return { results }
+    } catch (error) {
+        return { error }
+    }
 }
 
 const getById = async (companyId: string, clientId: string) => {
-    const results = await pool.query(clientsQueries.getOneByCompany, [
-        companyId,
-        clientId,
-    ])
+    try {
+        const result = await pool.query(clientsQueries.getById, [
+            companyId,
+            clientId,
+        ])
+        const results: Client = result.rows[0]
 
-    return results?.rows?.[0] || []
-}
-
-const remove = async (companyId: string, clientId: string) => {
-    const results = await pool.query(clientsQueries.remove, [
-        companyId,
-        clientId,
-    ])
-    return results?.rows?.[0]
+        return { results }
+    } catch (error) {
+        return { error }
+    }
 }
 
 const getByTaxpayerId = async (companyId: string, taxpayerId: string) => {
@@ -42,74 +34,100 @@ const getByTaxpayerId = async (companyId: string, taxpayerId: string) => {
         taxpayerId,
     ])
 
-    console.log('_results', results)
-
     return results?.rows?.[0]
 }
 
-const add = async (data: ClientData) => {
-    const {
-        name,
-        companyId,
-        taxpayer_id,
-        address_1,
-        address_2,
-        city,
-        country,
-        phone_1,
-        phone_2,
-    } = data
-    const results = await pool.query(clientsQueries.add, [
-        name,
-        companyId,
-        taxpayer_id,
-        address_1,
-        address_2,
-        city,
-        country,
-        phone_1,
-        phone_2,
-    ])
+const create = async (
+    companyId: string,
+    data: Omit<Client, 'id' | 'company_id'>,
+) => {
+    try {
+        const {
+            name,
+            taxpayer_id,
+            address_1,
+            address_2,
+            city,
+            country,
+            phone_1,
+            phone_2,
+        } = data
 
-    return results?.rows?.[0]
+        const result = await pool.query(clientsQueries.create, [
+            name,
+            companyId,
+            taxpayer_id,
+            address_1,
+            address_2,
+            city,
+            country,
+            phone_1,
+            phone_2,
+        ])
+
+        const results: Client = result.rows[0]
+        return { results }
+    } catch (error) {
+        return { error }
+    }
 }
 
 const update = async (
     companyId: string,
     clientId: string,
-    data: Partial<ClientData>,
+    data: Partial<Client>,
 ) => {
-    const {
-        name,
-        taxpayer_id,
-        address_1,
-        address_2,
-        city,
-        country,
-        phone_1,
-        phone_2,
-    } = data
-    const results = await pool.query(clientsQueries.update, [
-        companyId,
-        clientId,
-        name,
-        taxpayer_id,
-        address_1,
-        address_2,
-        city,
-        country,
-        phone_1,
-        phone_2,
-    ])
+    try {
+        const {
+            name,
+            taxpayer_id,
+            address_1,
+            address_2,
+            city,
+            country,
+            phone_1,
+            phone_2,
+        } = data
 
-    return results.rows[0]
+        const result = await pool.query(clientsQueries.update, [
+            companyId,
+            clientId,
+            name,
+            taxpayer_id,
+            address_1,
+            address_2,
+            city,
+            country,
+            phone_1,
+            phone_2,
+        ])
+        const results: Client = result.rows[0]
+
+        return { results }
+    } catch (error) {
+        return { error }
+    }
+}
+
+const remove = async (companyId: string, clientId: string) => {
+    try {
+        const result = await pool.query(clientsQueries.remove, [
+            companyId,
+            clientId,
+        ])
+        const results: Client = result.rows[0]
+
+        return { results }
+    } catch (error) {
+        return { error }
+    }
 }
 
 export default {
     getAll,
     getById,
     getByTaxpayerId,
-    remove,
-    add,
+    create,
     update,
+    remove,
 }

@@ -1,21 +1,52 @@
+/* eslint-disable camelcase */
 import pool from '@database/.'
-import { User, UserUpdate } from '@global-types/.'
+import { User } from '@global-types/.'
 import usersQueries from '@src/v1/queries/users.queries'
+import { editString, isEmpty } from '@utils/index'
+import { Params } from '@utils/params'
 
 const DEFAULT_ROLE_ID = 3
 
-const getAll = async (): Promise<User[]> => {
-    const results = await pool.query(usersQueries.getAll)
-    return results?.rows
+const getAll = async (companyId: string, queryParams: Params) => {
+    try {
+        let orderByParam = 'first_name'
+        let orderParam = 'ASC'
+
+        if (!isEmpty(queryParams)) {
+            if (queryParams.orderby) {
+                orderByParam = queryParams.orderby
+            }
+
+            if (queryParams.order) {
+                orderParam = queryParams.order
+            }
+        }
+
+        const query = editString(usersQueries.getAll, [
+            orderByParam,
+            orderParam,
+        ])
+
+        const result = await pool.query(query, [companyId])
+        const results: User[] = result.rows
+
+        return { results }
+    } catch (error) {
+        console.log(error)
+        return { error }
+    }
 }
 
-const getById = async (id: string) => {
+const getById = async (companyId: string, userId: string) => {
     try {
-        const results = await pool.query(usersQueries.getById, [id])
-        const result: User = results?.rows?.[0]
-        return { result }
-    } catch (e) {
-        const error = { message: 'Invalid id', error: e }
+        const result = await pool.query(usersQueries.getById, [
+            companyId,
+            userId,
+        ])
+        const results: User = result.rows[0]
+
+        return { results }
+    } catch (error) {
         return { error }
     }
 }
@@ -25,32 +56,146 @@ const getByEmail = async (email: string): Promise<User | undefined> => {
     return results?.rows?.[0]
 }
 
-const create = async (user: User) => {
-    const results = await pool.query(usersQueries.create, [
-        user.first_name,
-        user.last_name,
-        user.email,
-        user.user_password,
-        user.role_id || DEFAULT_ROLE_ID,
-    ])
-    return results?.rows?.[0]
+const verifyById = async (userId: string) => {
+    try {
+        const result = await pool.query(usersQueries.verifyById, [userId])
+        const results = result.rows[0]
+
+        return { results }
+    } catch (error) {
+        return { error }
+    }
 }
 
-const remove = async (id: string): Promise<User> => {
-    const results = await pool.query(usersQueries.remove, [id])
-    return results?.rows?.[0]
+const create = async (
+    companyId: string,
+    data: Omit<User, 'id' | 'company_id'>,
+) => {
+    try {
+        const {
+            first_name,
+            last_name,
+            email,
+            user_password,
+            role_id,
+            is_verified,
+            terms_accepted,
+            verification_token,
+        } = data
+
+        const result = await pool.query(usersQueries.create, [
+            first_name,
+            last_name,
+            email,
+            user_password,
+            role_id || DEFAULT_ROLE_ID,
+            is_verified,
+            terms_accepted,
+            verification_token,
+            companyId,
+        ])
+
+        const results: User = result.rows[0]
+
+        return { results }
+    } catch (error) {
+        return { error }
+    }
 }
 
-const update = async (id: string, data: UserUpdate): Promise<UserUpdate> => {
-    const results = await pool.query(usersQueries.update, [
-        id,
-        data.first_name,
-        data.last_name,
-        data.email,
-        data.user_password,
-        data.role_id,
-    ])
-    return results?.rows?.[0]
+const update = async (
+    companyId: string,
+    userId: string,
+    data: Partial<User>,
+) => {
+    try {
+        const {
+            first_name,
+            last_name,
+            email,
+            user_password,
+            role_id,
+            is_verified,
+            terms_accepted,
+            verification_token,
+        } = data
+
+        const result = await pool.query(usersQueries.update, [
+            companyId,
+            userId,
+            first_name,
+            last_name,
+            email,
+            user_password,
+            role_id,
+            is_verified,
+            terms_accepted,
+            verification_token,
+        ])
+
+        const results: User = result.rows[0]
+
+        return { results }
+    } catch (error) {
+        return { error }
+    }
 }
 
-export default { getAll, getById, getByEmail, create, remove, update }
+const updateById = async (userId: string, data: Partial<User>) => {
+    try {
+        const {
+            first_name,
+            last_name,
+            email,
+            user_password,
+            role_id,
+            is_verified,
+            terms_accepted,
+            verification_token,
+        } = data
+
+        const result = await pool.query(usersQueries.updateById, [
+            userId,
+            first_name,
+            last_name,
+            email,
+            user_password,
+            role_id,
+            is_verified,
+            terms_accepted,
+            verification_token,
+        ])
+
+        const results: User = result.rows[0]
+
+        return { results }
+    } catch (error) {
+        return { error }
+    }
+}
+
+const remove = async (companyId: string, userId: string) => {
+    try {
+        const result = await pool.query(usersQueries.remove, [
+            companyId,
+            userId,
+        ])
+
+        const results: User = result.rows[0]
+
+        return { results }
+    } catch (error) {
+        return { error }
+    }
+}
+
+export default {
+    getAll,
+    getById,
+    getByEmail,
+    verifyById,
+    create,
+    update,
+    updateById,
+    remove,
+}

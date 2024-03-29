@@ -1,10 +1,14 @@
 const TABLE_NAME = 'clients'
 
 const getAll = `SELECT * FROM ${TABLE_NAME} WHERE company_id = $1`
-const getOneByCompany = `SELECT * FROM ${TABLE_NAME} WHERE company_id = $1 AND client_id = $2`
+const getById = `SELECT * FROM ${TABLE_NAME} WHERE company_id = $1 AND client_id = $2`
 const remove = `DELETE FROM ${TABLE_NAME} WHERE company_id = $1 AND client_id = $2 RETURNING *`
 const getByTaxpayerId = `SELECT * FROM ${TABLE_NAME} WHERE company_id = $1 AND taxpayer_id = $2`
-const add = `INSERT INTO ${TABLE_NAME} (name, company_id, taxpayer_id, address_1, address_2, city, country, phone_1, phone_2) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`
+const create = `INSERT INTO ${TABLE_NAME} (name, company_id, taxpayer_id, address_1, address_2, city, country, phone_1, phone_2) 
+    VALUES 
+    ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+    RETURNING *
+`
 const update = `UPDATE ${TABLE_NAME} SET 
     name = COALESCE(NULLIF($3, ''), name),
     taxpayer_id = COALESCE(NULLIF($4, ''), taxpayer_id),
@@ -20,9 +24,9 @@ const update = `UPDATE ${TABLE_NAME} SET
 
 export default {
     getAll,
-    getOneByCompany,
+    getById,
     getByTaxpayerId,
     remove,
-    add,
+    create,
     update,
 }

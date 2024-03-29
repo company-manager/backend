@@ -8,6 +8,11 @@ const created = {
     message: 'Created',
 }
 
+const redirect = {
+    code: 301,
+    message: 'Redirected',
+}
+
 const badRequest = {
     code: 400,
     message: 'Bad request',
@@ -28,4 +33,18 @@ const notFound = {
     message: 'Not found',
 }
 
-export default { ok, unauthorized, notFound, forbidden, created, badRequest }
+const serverError = {
+    code: 500,
+    message: 'Server error',
+}
+
+export default {
+    ok,
+    unauthorized,
+    notFound,
+    forbidden,
+    created,
+    badRequest,
+    redirect,
+    serverError,
+}

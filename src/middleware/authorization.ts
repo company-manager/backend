@@ -1,10 +1,11 @@
 import { isPostmanVariable } from '@utils/.'
 import dotenv from 'dotenv'
+import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 
 dotenv.config()
 
-const authenticateToken = (req, res, next) => {
+const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization // Bearer TOKEN
     const token = authHeader?.split(' ')[1]
     console.log(authHeader)
@@ -32,4 +33,13 @@ const authenticateToken = (req, res, next) => {
     })
 }
 
-export { authenticateToken }
+const adminProtected = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    console.log('in')
+    next()
+}
+
+export { authenticateToken, adminProtected }
