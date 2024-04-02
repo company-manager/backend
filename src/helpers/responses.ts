@@ -33,6 +33,11 @@ const notFound = {
     message: 'Not found',
 }
 
+const conflict = {
+    code: 409,
+    message: 'Conflict',
+}
+
 const serverError = {
     code: 500,
     message: 'Server error',
@@ -46,5 +51,6 @@ export default {
     created,
     badRequest,
     redirect,
+    conflict,
     serverError,
 }
