@@ -156,47 +156,57 @@ const register = async (req: Request, res: Response) => {
         )
 
         if (companyAlreadyExists) {
-            return res.status(400).json({
-                ...responses.badRequest,
+            return res.status(409).json({
+                ...responses.conflict,
                 message: `Taxpayer id ${company.taxpayer_id} already exists`,
             })
         }
 
-        const { results: newCompany, error } =
+        // TODO don't create company without validating user info
+        // Right now company is being created even when user is throwing errors
+
+        const { results: newCompanyResults, error: newCompanyError } =
             await companiesServices.create(company)
-        if (error) {
-            return res.status(500).json({ ...responses.serverError, error })
+
+        if (newCompanyError) {
+            return res
+                .status(500)
+                .json({ ...responses.serverError, error: newCompanyError })
         }
 
-        if (newCompany) {
-            const companyId = newCompany.id
+        if (newCompanyResults) {
+            const companyId = newCompanyResults.id
 
-            const { results: newUser, error } = await usersServices.create(
-                companyId,
-                {
+            const { results: newUserResults, error: newUserError } =
+                await usersServices.create(companyId, {
                     ...user,
-                },
-            )
+                })
 
-            if (error) {
-                return res.status(500).json({ ...responses.serverError })
+            if (newUserError) {
+                await companiesServices.remove(newCompanyResults.id)
+
+                return res.status(409).json({
+                    ...responses.conflict,
+                    error: newUserError,
+                    message: `User with email: ${user.email} already exists`,
+                })
             }
 
-            if (newUser) {
+            if (newUserResults) {
                 const emailData = {
                     ...verificationEmail,
                     body: editString(verificationEmail.body, [
-                        newUser.first_name,
-                        `http://localhost:3003/api/v1/verify/${newUser.id}/${newUser.verification_token}`,
+                        newUserResults.first_name,
+                        `http://localhost:3003/api/v1/verify/${newUserResults.id}/${newUserResults.verification_token}`,
                     ]),
-                    to: newUser.email,
+                    to: newUserResults.email,
                 }
 
                 sendEmail(emailData)
 
                 return res.status(201).json({
                     ...responses.created,
-                    results: { company: companyId, user: newUser.id },
+                    results: { company: companyId, user: newUserResults.id },
                 })
             }
         }
