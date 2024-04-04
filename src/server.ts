@@ -1,4 +1,5 @@
 import express, { Express } from 'express'
+import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 import cors from 'cors'
@@ -18,6 +19,7 @@ const app: Express = express()
 const PORT = process.env.PORT
 
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }))
+app.use(helmet())
 app.use(express.json())
 app.use(cookieParser())
 
