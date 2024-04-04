@@ -14,6 +14,9 @@ import successVerificationEmail from '@emails/sign-up/verification/success'
 
 dotenv.config()
 
+const SITE_PORT = 3000
+const SITE_ORIGIN = `http://localhost:${SITE_PORT}`
+
 const login = async (req: Request, res: Response) => {
     try {
         const validUserRequest = req.body.user
@@ -163,9 +166,6 @@ const register = async (req: Request, res: Response) => {
             })
         }
 
-        // TODO don't create company without validating user info
-        // Right now company is being created even when user is throwing errors
-
         const { results: newCompanyResults, error: newCompanyError } =
             await companiesServices.create(company)
 
@@ -189,16 +189,30 @@ const register = async (req: Request, res: Response) => {
                 return res.status(409).json({
                     ...responses.conflict,
                     error: newUserError,
-                    message: `User with email: ${user.email} already exists`,
+                    message: `User with email ${user.email} already exists`,
                 })
             }
 
             if (newUserResults) {
+                if (!newUserResults.terms_accepted) {
+                    await companiesServices.remove(newCompanyResults.id)
+                    await usersServices.remove(
+                        newCompanyResults.id,
+                        newUserResults.id,
+                    )
+
+                    return
+                }
+
                 const emailData = {
                     ...verificationEmail,
                     body: editString(verificationEmail.body, [
                         newUserResults.first_name,
-                        `http://localhost:3003/api/v1/verify/${newUserResults.id}/${newUserResults.verification_token}`,
+                        `${
+                            process.env.API_ORIGIN || SITE_ORIGIN
+                        }/app/verify?id=${newUserResults.id}&token=${
+                            newUserResults.verification_token
+                        }`,
                     ]),
                     to: newUserResults.email,
                 }
@@ -207,7 +221,10 @@ const register = async (req: Request, res: Response) => {
 
                 return res.status(201).json({
                     ...responses.created,
-                    results: { company: companyId, user: newUserResults.id },
+                    results: {
+                        company: companyId,
+                        user: newUserResults.id,
+                    },
                 })
             }
         }
@@ -218,9 +235,11 @@ const register = async (req: Request, res: Response) => {
 
 const verify = async (req: Request, res: Response) => {
     try {
-        const { id, token } = req.params
+        const { id, token } = req.query
 
-        const { results: user, error } = await usersServices.verifyById(id)
+        const { results: user, error } = await usersServices.verifyById(
+            id as string,
+        )
 
         if (error) {
             return res.status(400).json({ ...responses.badRequest })
@@ -267,9 +286,9 @@ const verify = async (req: Request, res: Response) => {
 
                 sendEmail(emailData)
 
-                return res.status(301).json({
-                    ...responses.redirect,
-                    results: updatedUserResults,
+                return res.status(200).json({
+                    ...responses.ok,
+                    message: `User ${user.id} verified`,
                 })
             }
         }

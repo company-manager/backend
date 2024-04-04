@@ -7,6 +7,6 @@ router.post('/login', authController.login)
 router.get('/refresh', authController.refresh)
 router.delete('/logout', authController.logout)
 router.post('/register', authController.register)
-router.get('/verify/:id/:token', authController.verify)
+router.get('/verify', authController.verify)
 
 export default router
