@@ -13,6 +13,7 @@
       "@routes-V1/*": ["src/v1/routes/*"],
       "@repositories-V1/*": ["src/v1/repositories/*"],
       "@services-V1/*": ["src/v1/services/*"],
+      "@schemas-V1/*": ["src/v1/schemas/*"],
       "@middleware/*": ["src/middleware/*"],
       "@helpers/*": ["src/helpers/*"],
       "@utils/*": ["utils/*"],
