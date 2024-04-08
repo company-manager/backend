@@ -13,15 +13,14 @@ const getAll = async (companyId: string) => {
             const dbResult = await pool.query(clientsQueries.getAll, [
                 companyId,
             ])
-            const clientsCache = JSON.stringify(dbResult)
-            set(cacheKey, clientsCache)
-
             const results: Client[] = dbResult?.rows
+            const clientsCache = JSON.stringify(results)
+            set(cacheKey, clientsCache)
 
             return { results }
         }
 
-        const results: Client[] = JSON.parse(result)?.rows
+        const results: Client[] = JSON.parse(result)
 
         return { results }
     } catch (error) {
@@ -40,11 +39,13 @@ const getById = async (companyId: string, clientId: string) => {
                 clientId,
             ])
             const results: Client = result.rows[0]
+            const clientsCache = JSON.stringify(result)
+            set(cacheKey, clientsCache)
 
             return { results }
         }
 
-        const results: Client = JSON.parse(result)?.rows
+        const results: Client = JSON.parse(result)
 
         return { results }
     } catch (error) {
