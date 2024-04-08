@@ -34,8 +34,8 @@ const getAll = async (companyId: string, queryParams: Params) => {
 
             const dbResult = await pool.query(query, [companyId])
             const results: User[] = dbResult.rows
-            const cacheUsers = JSON.stringify(results)
-            set(cacheKey, cacheUsers)
+            const usersCache = JSON.stringify(results)
+            set(cacheKey, usersCache)
 
             return { results }
         }
@@ -59,8 +59,8 @@ const getById = async (companyId: string, userId: string) => {
                 userId,
             ])
             const results: User = dbResult.rows[0]
-            const cacheUser = JSON.stringify(results)
-            set(cacheKey, cacheUser)
+            const usersCache = JSON.stringify(results)
+            set(cacheKey, usersCache)
 
             return { results }
         }

@@ -14,8 +14,8 @@ const getAll = async (companyId: string) => {
                 companyId,
             ])
             const results: Document[] = result.rows
-            const cacheDocuments = JSON.stringify(results)
-            set(cacheKey, cacheDocuments)
+            const documentsCache = JSON.stringify(results)
+            set(cacheKey, documentsCache)
 
             return { results }
         }
@@ -39,8 +39,8 @@ const getById = async (companyId: string, documentId: string) => {
                 documentId,
             ])
             const results: Document = result.rows[0]
-            const cacheDocuments = JSON.stringify(results)
-            set(cacheKey, cacheDocuments)
+            const documentsCache = JSON.stringify(results)
+            set(cacheKey, documentsCache)
 
             return { results }
         }
