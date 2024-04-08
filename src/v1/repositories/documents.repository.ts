@@ -6,7 +6,7 @@ import { get, set } from 'cache/utils'
 
 const getAll = async (companyId: string) => {
     try {
-        const cacheKey = `get-all-documents-${companyId}`
+        const cacheKey = `all-documents-${companyId}`
         const result = await get(cacheKey)
 
         if (!result) {
@@ -30,7 +30,7 @@ const getAll = async (companyId: string) => {
 
 const getById = async (companyId: string, documentId: string) => {
     try {
-        const cacheKey = `get-document-${companyId}:${documentId}`
+        const cacheKey = `document-${companyId}:${documentId}`
         const result = await get(cacheKey)
 
         if (!result) {
