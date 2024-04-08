@@ -6,18 +6,13 @@ import { get, set } from 'cache/utils'
 
 const getAll = async (companyId: string) => {
     try {
-        const cacheKey = `clients-${companyId}`
-
-        console.time('Clients cache')
+        const cacheKey = `get-all-clients-${companyId}`
         const result = await get(cacheKey)
-        console.timeEnd('Clients cache')
 
         if (!result) {
-            console.time('Clients')
             const dbResult = await pool.query(clientsQueries.getAll, [
                 companyId,
             ])
-            console.timeEnd('Clients')
             const clientsCache = JSON.stringify(dbResult)
             set(cacheKey, clientsCache)
 
@@ -36,11 +31,20 @@ const getAll = async (companyId: string) => {
 
 const getById = async (companyId: string, clientId: string) => {
     try {
-        const result = await pool.query(clientsQueries.getById, [
-            companyId,
-            clientId,
-        ])
-        const results: Client = result.rows[0]
+        const cacheKey = `get-client-${companyId}:${clientId}`
+        const result = await get(cacheKey)
+
+        if (!result) {
+            const result = await pool.query(clientsQueries.getById, [
+                companyId,
+                clientId,
+            ])
+            const results: Client = result.rows[0]
+
+            return { results }
+        }
+
+        const results: Client = JSON.parse(result)?.rows
 
         return { results }
     } catch (error) {
