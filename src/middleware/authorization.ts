@@ -8,7 +8,6 @@ dotenv.config()
 const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization // Bearer TOKEN
     const token = authHeader?.split(' ')[1]
-    console.log(authHeader)
 
     if (!token || isPostmanVariable(token))
         return res.status(403).json({
@@ -38,7 +37,6 @@ const adminProtected = async (
     res: Response,
     next: NextFunction,
 ) => {
-    console.log('in')
     next()
 }
 

@@ -2,11 +2,31 @@
 import pool from '@database/index'
 import { Client } from '@global-types/index'
 import clientsQueries from '@queries-V1/clients.queries'
+import { get, set } from 'cache/utils'
 
 const getAll = async (companyId: string) => {
     try {
-        const result = await pool.query(clientsQueries.getAll, [companyId])
-        const results: Client[] = result?.rows
+        const cacheKey = `clients-${companyId}`
+
+        console.time('Clients cache')
+        const result = await get(cacheKey)
+        console.timeEnd('Clients cache')
+
+        if (!result) {
+            console.time('Clients')
+            const dbResult = await pool.query(clientsQueries.getAll, [
+                companyId,
+            ])
+            console.timeEnd('Clients')
+            const clientsCache = JSON.stringify(dbResult)
+            set(cacheKey, clientsCache)
+
+            const results: Client[] = dbResult?.rows
+
+            return { results }
+        }
+
+        const results: Client[] = JSON.parse(result)?.rows
 
         return { results }
     } catch (error) {

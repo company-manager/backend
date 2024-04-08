@@ -82,7 +82,6 @@ const login = async (req: Request, res: Response) => {
 const refresh = (req: Request, res: Response) => {
     try {
         const refreshToken = req.cookies.refresh_token
-        console.log('r_token_', refreshToken)
 
         if (!refreshToken)
             return res.status(401).json({
