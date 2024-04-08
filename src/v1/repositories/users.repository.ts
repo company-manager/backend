@@ -4,11 +4,15 @@ import { User } from '@global-types/.'
 import usersQueries from '@src/v1/queries/users.queries'
 import { editString, isEmpty } from '@utils/index'
 import { Params } from '@utils/params'
+import { get, set } from 'cache/utils'
 
 const DEFAULT_ROLE_ID = 3
 
 const getAll = async (companyId: string, queryParams: Params) => {
     try {
+        const cacheKey = `all-users-${companyId}`
+        const result = await get(cacheKey)
+
         let orderByParam = 'first_name'
         let orderParam = 'ASC'
 
@@ -22,28 +26,46 @@ const getAll = async (companyId: string, queryParams: Params) => {
             }
         }
 
-        const query = editString(usersQueries.getAll, [
-            orderByParam,
-            orderParam,
-        ])
+        if (!result) {
+            const query = editString(usersQueries.getAll, [
+                orderByParam,
+                orderParam,
+            ])
 
-        const result = await pool.query(query, [companyId])
-        const results: User[] = result.rows
+            const dbResult = await pool.query(query, [companyId])
+            const results: User[] = dbResult.rows
+            const cacheUsers = JSON.stringify(results)
+            set(cacheKey, cacheUsers)
+
+            return { results }
+        }
+
+        const results: User[] = JSON.parse(result)
 
         return { results }
     } catch (error) {
-        console.log(error)
         return { error }
     }
 }
 
 const getById = async (companyId: string, userId: string) => {
     try {
-        const result = await pool.query(usersQueries.getById, [
-            companyId,
-            userId,
-        ])
-        const results: User = result.rows[0]
+        const cacheKey = `get-user-${companyId}:${userId}`
+        const result = await get(cacheKey)
+
+        if (!result) {
+            const dbResult = await pool.query(usersQueries.getById, [
+                companyId,
+                userId,
+            ])
+            const results: User = dbResult.rows[0]
+            const cacheUser = JSON.stringify(results)
+            set(cacheKey, cacheUser)
+
+            return { results }
+        }
+
+        const results: User = JSON.parse(result)
 
         return { results }
     } catch (error) {
