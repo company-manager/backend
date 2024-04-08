@@ -2,11 +2,25 @@
 import pool from '@database/index'
 import { Document } from '@global-types/index'
 import documentsQueries from '@queries-V1/documents.queries'
+import { get, set } from 'cache/utils'
 
 const getAll = async (companyId: string) => {
     try {
-        const result = await pool.query(documentsQueries.getAll, [companyId])
-        const results: Document[] = result.rows
+        const cacheKey = `get-all-documents-${companyId}`
+        const result = await get(cacheKey)
+
+        if (!result) {
+            const result = await pool.query(documentsQueries.getAll, [
+                companyId,
+            ])
+            const results: Document[] = result.rows
+            const cacheDocuments = JSON.stringify(results)
+            set(cacheKey, cacheDocuments)
+
+            return { results }
+        }
+
+        const results: Document[] = JSON.parse(result)
 
         return { results }
     } catch (error) {
@@ -16,11 +30,22 @@ const getAll = async (companyId: string) => {
 
 const getById = async (companyId: string, documentId: string) => {
     try {
-        const result = await pool.query(documentsQueries.getById, [
-            companyId,
-            documentId,
-        ])
-        const results: Document = result.rows[0]
+        const cacheKey = `get-document-${companyId}:${documentId}`
+        const result = await get(cacheKey)
+
+        if (!result) {
+            const result = await pool.query(documentsQueries.getById, [
+                companyId,
+                documentId,
+            ])
+            const results: Document = result.rows[0]
+            const cacheDocuments = JSON.stringify(results)
+            set(cacheKey, cacheDocuments)
+
+            return { results }
+        }
+
+        const results: Document = JSON.parse(result)
 
         return { results }
     } catch (error) {
