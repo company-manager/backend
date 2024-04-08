@@ -2,11 +2,25 @@
 import pool from '@database/index'
 import { Project } from '@global-types/index'
 import projectsQueries from '@queries-V1/projects.queries'
+import { get, set } from 'cache/utils'
 
 const getAll = async (companyId: string) => {
     try {
-        const result = await pool.query(projectsQueries.getAll, [companyId])
-        const results: Project[] = result.rows
+        const cacheKey = `get-all-projects-${companyId}`
+        const result = await get(cacheKey)
+
+        if (!result) {
+            const dbResult = await pool.query(projectsQueries.getAll, [
+                companyId,
+            ])
+            const results: Project[] = dbResult?.rows
+            const projectsCache = JSON.stringify(results)
+            set(cacheKey, projectsCache)
+
+            return { results }
+        }
+
+        const results: Project[] = JSON.parse(result)
 
         return { results }
     } catch (error) {
@@ -16,11 +30,22 @@ const getAll = async (companyId: string) => {
 
 const getById = async (companyId: string, projectId: string) => {
     try {
-        const result = await pool.query(projectsQueries.getById, [
-            companyId,
-            projectId,
-        ])
-        const results: Project = result.rows[0]
+        const cacheKey = `get-project-${companyId}:${projectId}`
+        const result = await get(cacheKey)
+
+        if (!result) {
+            const result = await pool.query(projectsQueries.getById, [
+                companyId,
+                projectId,
+            ])
+            const results: Project = result.rows[0]
+            const projectsCache = JSON.stringify(results)
+            set(cacheKey, projectsCache)
+
+            return { results }
+        }
+
+        const results: Project = JSON.parse(result)
 
         return { results }
     } catch (error) {
