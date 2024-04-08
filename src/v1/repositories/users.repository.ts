@@ -50,7 +50,7 @@ const getAll = async (companyId: string, queryParams: Params) => {
 
 const getById = async (companyId: string, userId: string) => {
     try {
-        const cacheKey = `get-user-${companyId}:${userId}`
+        const cacheKey = `user-${companyId}:${userId}`
         const result = await get(cacheKey)
 
         if (!result) {
