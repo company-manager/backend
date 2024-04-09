@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import userService from '@services-V1/users.services'
+import usersRepository from '@repositories-V1/users.repository'
 import responses from '@src/helpers/responses'
 import { Request, Response } from 'express'
 import companiesServices from '@services-V1/companies.services'
@@ -39,7 +39,7 @@ const remove = async (req: Request, res: Response) => {
         const { id: companyId } = req.params
         const { id: userId } = req.body.user
         const { results: userResults, error: userError } =
-            await userService.getById(companyId, userId)
+            await usersRepository.getById(companyId, userId)
         const isUserValid = !!userId && !userError
         const { results: companyResults, error: companyError } =
             await companiesServices.getById(companyId)
