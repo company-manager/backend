@@ -2,13 +2,13 @@
 import usersRepository from '@repositories-V1/users.repository'
 import responses from '@src/helpers/responses'
 import { Request, Response } from 'express'
-import companiesServices from '@services-V1/companies.services'
+import companiesRepository from '@repositories-V1/companies.repository'
 import { isAdmin } from '@utils/index'
 
 const getById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
-        const { results, error } = await companiesServices.getById(id)
+        const { results, error } = await companiesRepository.getById(id)
 
         if (!results)
             return res.status(404).json({
@@ -42,7 +42,7 @@ const remove = async (req: Request, res: Response) => {
             await usersRepository.getById(companyId, userId)
         const isUserValid = !!userId && !userError
         const { results: companyResults, error: companyError } =
-            await companiesServices.getById(companyId)
+            await companiesRepository.getById(companyId)
 
         if (!isUserValid) {
             return res.status(401).json({
@@ -71,7 +71,7 @@ const remove = async (req: Request, res: Response) => {
 
             if (hasAdminPermissions) {
                 const { results: removeResults, error: removeError } =
-                    await companiesServices.remove(companyId)
+                    await companiesRepository.remove(companyId)
 
                 if (removeError) {
                     return res

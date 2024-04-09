@@ -8,7 +8,7 @@ import { setJwtTokens, setNewAccessToken } from '@utils/jwt'
 import { Company, User } from '@global-types/index'
 import { editString, isEmpty, sendEmail } from '@utils/index'
 import responses from '@src/helpers/responses'
-import companiesServices from '@services-V1/companies.services'
+import companiesRepository from '@repositories-V1/companies.repository'
 import verificationEmail from '@emails/sign-up/verification/verify'
 import successVerificationEmail from '@emails/sign-up/verification/success'
 
@@ -154,7 +154,7 @@ const register = async (req: Request, res: Response) => {
         if (isEmpty(company) || isEmpty(user))
             return res.status(400).json({ ...responses.badRequest })
 
-        const companyAlreadyExists = await companiesServices.getByTaxpayerId(
+        const companyAlreadyExists = await companiesRepository.getByTaxpayerId(
             company.taxpayer_id,
         )
 
@@ -166,7 +166,7 @@ const register = async (req: Request, res: Response) => {
         }
 
         const { results: newCompanyResults, error: newCompanyError } =
-            await companiesServices.create(company)
+            await companiesRepository.create(company)
 
         if (newCompanyError) {
             return res
@@ -183,7 +183,7 @@ const register = async (req: Request, res: Response) => {
                 })
 
             if (newUserError) {
-                await companiesServices.remove(newCompanyResults.id)
+                await companiesRepository.remove(newCompanyResults.id)
 
                 return res.status(409).json({
                     ...responses.conflict,
@@ -194,7 +194,7 @@ const register = async (req: Request, res: Response) => {
 
             if (newUserResults) {
                 if (!newUserResults.terms_accepted) {
-                    await companiesServices.remove(newCompanyResults.id)
+                    await companiesRepository.remove(newCompanyResults.id)
                     await usersRepository.remove(
                         newCompanyResults.id,
                         newUserResults.id,
