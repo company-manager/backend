@@ -2,25 +2,28 @@
 import pool from '@database/index'
 import { Client } from '@global-types/index'
 import clientsQueries from '@v1/queries/clients.queries'
-import { get, set } from 'cache/utils'
+import {
+    get,
+    set,
+    update as updateCache,
+    remove as deleteCache,
+} from 'cache/utils'
 
 const getAll = async (companyId: string) => {
     try {
         const cacheKey = `all-clients-${companyId}`
-        const result = await get(cacheKey)
+        const cache = await get(cacheKey)
 
-        if (!result) {
-            const dbResult = await pool.query(clientsQueries.getAll, [
-                companyId,
-            ])
-            const results: Client[] = dbResult?.rows
+        if (!cache) {
+            const result = await pool.query(clientsQueries.getAll, [companyId])
+            const results: Client[] = result?.rows
             const clientsCache = JSON.stringify(results)
             set(cacheKey, clientsCache)
 
             return { results }
         }
 
-        const results: Client[] = JSON.parse(result)
+        const results: Client[] = JSON.parse(cache)
 
         return { results }
     } catch (error) {
@@ -31,9 +34,9 @@ const getAll = async (companyId: string) => {
 const getById = async (companyId: string, clientId: string) => {
     try {
         const cacheKey = `client-${companyId}:${clientId}`
-        const result = await get(cacheKey)
+        const cache = await get(cacheKey)
 
-        if (!result) {
+        if (!cache) {
             const result = await pool.query(clientsQueries.getById, [
                 companyId,
                 clientId,
@@ -45,7 +48,7 @@ const getById = async (companyId: string, clientId: string) => {
             return { results }
         }
 
-        const results: Client = JSON.parse(result)
+        const results: Client = JSON.parse(cache)
 
         return { results }
     } catch (error) {
@@ -91,6 +94,9 @@ const create = async (
         ])
 
         const results: Client = result.rows[0]
+
+        updateCache<Client>('client', companyId, results)
+
         return { results }
     } catch (error) {
         return { error }
@@ -128,6 +134,8 @@ const update = async (
         ])
         const results: Client = result.rows[0]
 
+        updateCache<Client>('client', companyId, results)
+
         return { results }
     } catch (error) {
         return { error }
@@ -136,11 +144,14 @@ const update = async (
 
 const remove = async (companyId: string, clientId: string) => {
     try {
+        const cacheKey = `client-${companyId}:${clientId}`
         const result = await pool.query(clientsQueries.remove, [
             companyId,
             clientId,
         ])
         const results: Client = result.rows[0]
+
+        deleteCache(cacheKey)
 
         return { results }
     } catch (error) {
