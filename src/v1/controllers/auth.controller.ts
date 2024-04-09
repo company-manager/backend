@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { Request, Response } from 'express'
-import usersServices from '@services-V1/users.services'
+import usersRepository from '@repositories-V1/users.repository'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
@@ -27,7 +27,7 @@ const login = async (req: Request, res: Response) => {
             })
 
         const { email, password } = req.body.user
-        const user = await usersServices.getByEmail(email)
+        const user = await usersRepository.getByEmail(email)
 
         if (!user)
             return res.status(401).json({
@@ -178,7 +178,7 @@ const register = async (req: Request, res: Response) => {
             const companyId = newCompanyResults.id
 
             const { results: newUserResults, error: newUserError } =
-                await usersServices.create(companyId, {
+                await usersRepository.create(companyId, {
                     ...user,
                 })
 
@@ -195,7 +195,7 @@ const register = async (req: Request, res: Response) => {
             if (newUserResults) {
                 if (!newUserResults.terms_accepted) {
                     await companiesServices.remove(newCompanyResults.id)
-                    await usersServices.remove(
+                    await usersRepository.remove(
                         newCompanyResults.id,
                         newUserResults.id,
                     )
@@ -236,7 +236,7 @@ const verify = async (req: Request, res: Response) => {
     try {
         const { id, token } = req.query
 
-        const { results: user, error } = await usersServices.verifyById(
+        const { results: user, error } = await usersRepository.verifyById(
             id as string,
         )
 
@@ -266,7 +266,7 @@ const verify = async (req: Request, res: Response) => {
             }
 
             const { results: updatedUserResults, error: updatedUserError } =
-                await usersServices.updateById(user.id, {
+                await usersRepository.updateById(user.id, {
                     is_verified: true,
                 })
 

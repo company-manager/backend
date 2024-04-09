@@ -2,7 +2,7 @@
 import pool from '@database/.'
 import { User } from '@global-types/.'
 import usersQueries from '@src/v1/queries/users.queries'
-import { editString, isEmpty } from '@utils/index'
+import { editString, generateToken, isEmpty } from '@utils/index'
 import { Params } from '@utils/params'
 import { get, set } from 'cache/utils'
 
@@ -94,6 +94,7 @@ const create = async (
     data: Omit<User, 'id' | 'company_id'>,
 ) => {
     try {
+        const verification_token = generateToken()
         const {
             first_name,
             last_name,
@@ -102,7 +103,6 @@ const create = async (
             role_id,
             is_verified,
             terms_accepted,
-            verification_token,
         } = data
 
         const result = await pool.query(usersQueries.create, [

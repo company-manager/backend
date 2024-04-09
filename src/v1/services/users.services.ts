@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { User } from '@global-types/.'
 import usersRepository from '@repositories-V1/users.repository'
-import { generateToken } from '@utils/index'
 import { Params } from '@utils/params'
 
 const getAll = async (companyId: string, queryParams: Params) => {
@@ -28,10 +27,8 @@ const create = async (
     companyId: string,
     data: Omit<User, 'id' | 'company_id'>,
 ) => {
-    const token = generateToken()
     const results = await usersRepository.create(companyId, {
         ...data,
-        verification_token: token,
     })
     return results
 }
