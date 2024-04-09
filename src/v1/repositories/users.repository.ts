@@ -3,7 +3,7 @@ import pool from '@database/.'
 import { User } from '@global-types/.'
 import usersQueries from '@src/v1/queries/users.queries'
 import { editString, generateToken, isEmpty } from '@utils/index'
-import { Params } from '@utils/params'
+import { Params } from '@src/helpers/params'
 import { get, set } from 'cache/utils'
 
 const DEFAULT_ROLE_ID = 3

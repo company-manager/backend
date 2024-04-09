@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import responses from '@helpers/responses'
-import { Params } from '@utils/params'
+import { Params } from '@src/helpers/params'
 
 type ListResponseApi<T> =
     | {
