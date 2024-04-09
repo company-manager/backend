@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
-import usersRepository from '@repositories-V1/users.repository'
+import usersRepository from '@v1/repositories/users.repository'
 import responses from '@src/helpers/responses'
 import { Request, Response } from 'express'
-import companiesRepository from '@repositories-V1/companies.repository'
+import companiesRepository from '@v1/repositories/companies.repository'
 import { isAdmin } from '@utils/index'
 
 const getById = async (req: Request, res: Response) => {

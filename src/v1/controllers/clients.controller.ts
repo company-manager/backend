@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import { Request, Response } from 'express'
 import { Client } from '@global-types/index'
-import clientsRepository from '@repositories-V1/clients.repository'
+import clientsRepository from '@v1/repositories/clients.repository'
 import middlewareUtils from '@utils/middleware/.'
 
 const getAll = async (req: Request, res: Response) => {

@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import pool from '@database/index'
 import { Document } from '@global-types/index'
-import documentsQueries from '@queries-V1/documents.queries'
+import documentsQueries from '@v1/queries/documents.queries'
 import { get, set } from 'cache/utils'
 
 const getAll = async (companyId: string) => {

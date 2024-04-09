@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Document } from '@global-types/index'
-import documentsRepository from '@repositories-V1/documents.repository'
+import documentsRepository from '@v1/repositories/documents.repository'
 import middlewareUtils from '@utils/middleware/.'
 
 const getAll = async (req: Request, res: Response) => {

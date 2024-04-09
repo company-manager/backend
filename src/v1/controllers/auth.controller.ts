@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { Request, Response } from 'express'
-import usersRepository from '@repositories-V1/users.repository'
+import usersRepository from '@v1/repositories/users.repository'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
@@ -8,7 +8,7 @@ import { setJwtTokens, setNewAccessToken } from '@utils/jwt'
 import { Company, User } from '@global-types/index'
 import { editString, isEmpty, sendEmail } from '@utils/index'
 import responses from '@src/helpers/responses'
-import companiesRepository from '@repositories-V1/companies.repository'
+import companiesRepository from '@v1/repositories/companies.repository'
 import verificationEmail from '@emails/sign-up/verification/verify'
 import successVerificationEmail from '@emails/sign-up/verification/success'
 

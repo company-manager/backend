@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import documentsController from '@controllers-V1/documents.controller'
+import documentsController from '@v1/controllers/documents.controller'
 
 const router = Router()
 

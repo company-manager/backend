@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import pool from '@database/index'
 import { Company } from '@global-types/index'
-import companiesQueries from '@queries-V1/companies.queries'
+import companiesQueries from '@v1/queries/companies.queries'
 
 const create = async (data: Omit<Company, 'id'>) => {
     try {

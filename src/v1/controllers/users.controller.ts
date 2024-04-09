@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { Request, Response } from 'express'
-import usersRepository from '@repositories-V1/users.repository'
+import usersRepository from '@v1/repositories/users.repository'
 import responses from '@helpers/responses'
 import middlewareUtils from '@utils/middleware/.'
 import { User } from '@global-types/index'
