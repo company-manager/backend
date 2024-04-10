@@ -2,7 +2,7 @@ import { Router } from 'express'
 import usersControllers from '@src/v1/controllers/users.controller'
 import { adminProtected } from '@src/middleware/authorization'
 import dataValidator from '@src/middleware/data-validation'
-import { createUserSchema, updateUserSchema } from '@schemas-V1/users.schemas'
+import { createUserSchema, updateUserSchema } from '@v1/schemas/users.schemas'
 
 const router = Router()
 

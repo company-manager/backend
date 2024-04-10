@@ -1,9 +1,9 @@
 import express from 'express'
 import authController from '@src/v1/controllers/auth.controller'
 import dataValidator from '@src/middleware/data-validation'
-import companySchema from '@schemas-V1/companies.schemas'
-import { registerUserSchema } from '@schemas-V1/users.schemas'
-import loginSchema from '@schemas-V1/login.schemas'
+import companySchema from '@v1/schemas/companies.schemas'
+import { registerUserSchema } from '@v1/schemas/users.schemas'
+import loginSchema from '@v1/schemas/login.schemas'
 
 const router = express.Router()
 
