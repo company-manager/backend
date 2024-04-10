@@ -1,7 +1,7 @@
 import Joi from 'joi'
 
 const companyName = Joi.string()
-    .regex(/(^[A-Za-z]+)[A-Za-z .,-]+/)
+    .regex(/(^[A-Z]|[a-z]|[0-9]+)([A-Z]|[a-z]|[ .,-]|[0-9])+/)
     .required()
 const taxpayerId = Joi.string()
     .regex(/^[0-9]{9}$/)
