@@ -70,6 +70,15 @@ const create = async (
     data: Omit<Client, 'id' | 'company_id'>,
 ) => {
     try {
+        const clientAlreadyExists = await getByTaxpayerId(
+            companyId,
+            data.taxpayer_id,
+        )
+
+        if (clientAlreadyExists) {
+            return { error: { message: 'Client already exists' } }
+        }
+
         const {
             name,
             taxpayer_id,
