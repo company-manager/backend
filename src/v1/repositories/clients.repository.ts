@@ -42,7 +42,7 @@ const getById = async (companyId: string, clientId: string) => {
                 clientId,
             ])
             const results: Client = result.rows[0]
-            const clientsCache = JSON.stringify(result)
+            const clientsCache = JSON.stringify(results)
             set(cacheKey, clientsCache)
 
             return { results }

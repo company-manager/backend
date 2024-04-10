@@ -2,25 +2,28 @@
 import pool from '@database/index'
 import { Project } from '@global-types/index'
 import projectsQueries from '@v1/queries/projects.queries'
-import { get, set } from 'cache/utils'
+import {
+    get,
+    set,
+    update as updateCache,
+    remove as deleteCache,
+} from 'cache/utils'
 
 const getAll = async (companyId: string) => {
     try {
         const cacheKey = `all-projects-${companyId}`
-        const result = await get(cacheKey)
+        const cache = await get(cacheKey)
 
-        if (!result) {
-            const dbResult = await pool.query(projectsQueries.getAll, [
-                companyId,
-            ])
-            const results: Project[] = dbResult?.rows
+        if (!cache) {
+            const result = await pool.query(projectsQueries.getAll, [companyId])
+            const results: Project[] = result?.rows
             const projectsCache = JSON.stringify(results)
             set(cacheKey, projectsCache)
 
             return { results }
         }
 
-        const results: Project[] = JSON.parse(result)
+        const results: Project[] = JSON.parse(cache)
 
         return { results }
     } catch (error) {
@@ -31,9 +34,9 @@ const getAll = async (companyId: string) => {
 const getById = async (companyId: string, projectId: string) => {
     try {
         const cacheKey = `project-${companyId}:${projectId}`
-        const result = await get(cacheKey)
+        const cache = await get(cacheKey)
 
-        if (!result) {
+        if (!cache) {
             const result = await pool.query(projectsQueries.getById, [
                 companyId,
                 projectId,
@@ -45,7 +48,7 @@ const getById = async (companyId: string, projectId: string) => {
             return { results }
         }
 
-        const results: Project = JSON.parse(result)
+        const results: Project = JSON.parse(cache)
 
         return { results }
     } catch (error) {
@@ -66,6 +69,8 @@ const create = async (companyId: string, data: Omit<Project, 'id'>) => {
         ])
 
         const results: Project = result.rows[0]
+
+        updateCache<Project>('project', companyId, results)
 
         return { results }
     } catch (error) {
@@ -92,6 +97,8 @@ const update = async (
 
         const results: Project = result?.rows?.[0]
 
+        updateCache<Project>('project', companyId, results)
+
         return { results }
     } catch (error) {
         return { error }
@@ -100,11 +107,14 @@ const update = async (
 
 const remove = async (companyId: string, projectId: string) => {
     try {
+        const cacheKey = `project-${companyId}:${projectId}`
         const result = await pool.query(projectsQueries.remove, [
             companyId,
             projectId,
         ])
         const results: Project = result.rows[0]
+
+        deleteCache(cacheKey)
 
         return { results }
     } catch (error) {

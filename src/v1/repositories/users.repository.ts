@@ -4,14 +4,19 @@ import { User } from '@global-types/.'
 import usersQueries from '@src/v1/queries/users.queries'
 import { editString, generateToken, isEmpty } from '@utils/index'
 import { Params } from '@src/helpers/params'
-import { get, set } from 'cache/utils'
+import {
+    get,
+    set,
+    update as updateCache,
+    remove as deleteCache,
+} from 'cache/utils'
 
 const DEFAULT_ROLE_ID = 3
 
 const getAll = async (companyId: string, queryParams: Params) => {
     try {
         const cacheKey = `all-users-${companyId}`
-        const result = await get(cacheKey)
+        const cache = await get(cacheKey)
 
         let orderByParam = 'first_name'
         let orderParam = 'ASC'
@@ -26,21 +31,21 @@ const getAll = async (companyId: string, queryParams: Params) => {
             }
         }
 
-        if (!result) {
+        if (!cache) {
             const query = editString(usersQueries.getAll, [
                 orderByParam,
                 orderParam,
             ])
 
-            const dbResult = await pool.query(query, [companyId])
-            const results: User[] = dbResult.rows
+            const result = await pool.query(query, [companyId])
+            const results: User[] = result.rows
             const usersCache = JSON.stringify(results)
             set(cacheKey, usersCache)
 
             return { results }
         }
 
-        const results: User[] = JSON.parse(result)
+        const results: User[] = JSON.parse(cache)
 
         return { results }
     } catch (error) {
@@ -51,21 +56,21 @@ const getAll = async (companyId: string, queryParams: Params) => {
 const getById = async (companyId: string, userId: string) => {
     try {
         const cacheKey = `user-${companyId}:${userId}`
-        const result = await get(cacheKey)
+        const cache = await get(cacheKey)
 
-        if (!result) {
-            const dbResult = await pool.query(usersQueries.getById, [
+        if (!cache) {
+            const result = await pool.query(usersQueries.getById, [
                 companyId,
                 userId,
             ])
-            const results: User = dbResult.rows[0]
+            const results: User = result.rows[0]
             const usersCache = JSON.stringify(results)
             set(cacheKey, usersCache)
 
             return { results }
         }
 
-        const results: User = JSON.parse(result)
+        const results: User = JSON.parse(cache)
 
         return { results }
     } catch (error) {
@@ -119,6 +124,8 @@ const create = async (
 
         const results: User = result.rows[0]
 
+        updateCache<User>('user', companyId, results)
+
         return { results }
     } catch (error) {
         return { error }
@@ -156,6 +163,8 @@ const update = async (
         ])
 
         const results: User = result.rows[0]
+
+        updateCache<User>('user', companyId, results)
 
         return { results }
     } catch (error) {
@@ -198,12 +207,14 @@ const updateById = async (userId: string, data: Partial<User>) => {
 
 const remove = async (companyId: string, userId: string) => {
     try {
+        const cacheKey = `user-${companyId}:${userId}`
         const result = await pool.query(usersQueries.remove, [
             companyId,
             userId,
         ])
-
         const results: User = result.rows[0]
+
+        deleteCache(cacheKey)
 
         return { results }
     } catch (error) {

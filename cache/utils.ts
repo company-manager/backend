@@ -24,13 +24,15 @@ const update = async <T extends Data>(
     companyId: string,
     data: T,
 ) => {
-    // Update single instance
-    const singleCacheKey = `all-${instance}-${companyId}`
-    updateList<T>(singleCacheKey, data)
-
     // Update list
-    const listCacheKey = `${instance}-${companyId}:${data.id}`
-    updateSingle(listCacheKey, data)
+    const listCacheKey = `all-${instance}-${companyId}`
+    updateList<T>(listCacheKey, data)
+
+    // Update single instance
+    const singleCacheKey = `${instance}-${companyId}:${
+        data.id || data[`${instance}_id`]
+    }`
+    updateSingle<T>(singleCacheKey, data)
 }
 
 const updateSingle = <T>(key: string, data: T) => {
@@ -42,7 +44,7 @@ const updateList = async <T>(key: string, data: T) => {
     const dataAlreadyCached = await get(key)
     const parsedData = JSON.parse(dataAlreadyCached)
 
-    const updatedData = [...parsedData, data]
+    const updatedData = parsedData ? [...parsedData, data] : [data]
     const updatedDataCache = JSON.stringify(updatedData)
 
     set(key, updatedDataCache)

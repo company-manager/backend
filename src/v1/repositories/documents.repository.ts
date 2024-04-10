@@ -2,14 +2,19 @@
 import pool from '@database/index'
 import { Document } from '@global-types/index'
 import documentsQueries from '@v1/queries/documents.queries'
-import { get, set } from 'cache/utils'
+import {
+    get,
+    set,
+    update as updateCache,
+    remove as deleteCache,
+} from 'cache/utils'
 
 const getAll = async (companyId: string) => {
     try {
         const cacheKey = `all-documents-${companyId}`
-        const result = await get(cacheKey)
+        const cache = await get(cacheKey)
 
-        if (!result) {
+        if (!cache) {
             const result = await pool.query(documentsQueries.getAll, [
                 companyId,
             ])
@@ -20,7 +25,7 @@ const getAll = async (companyId: string) => {
             return { results }
         }
 
-        const results: Document[] = JSON.parse(result)
+        const results: Document[] = JSON.parse(cache)
 
         return { results }
     } catch (error) {
@@ -31,9 +36,9 @@ const getAll = async (companyId: string) => {
 const getById = async (companyId: string, documentId: string) => {
     try {
         const cacheKey = `document-${companyId}:${documentId}`
-        const result = await get(cacheKey)
+        const cache = await get(cacheKey)
 
-        if (!result) {
+        if (!cache) {
             const result = await pool.query(documentsQueries.getById, [
                 companyId,
                 documentId,
@@ -45,7 +50,7 @@ const getById = async (companyId: string, documentId: string) => {
             return { results }
         }
 
-        const results: Document = JSON.parse(result)
+        const results: Document = JSON.parse(cache)
 
         return { results }
     } catch (error) {
@@ -67,6 +72,8 @@ const create = async (
         ])
 
         const results: Document = result.rows[0]
+
+        updateCache<Document>('document', companyId, results)
 
         return { results }
     } catch (error) {
@@ -91,6 +98,8 @@ const update = async (
 
         const results: Document = result.rows[0]
 
+        updateCache<Document>('document', companyId, results)
+
         return { results }
     } catch (error) {
         return { error }
@@ -99,12 +108,15 @@ const update = async (
 
 const remove = async (companyId: string, documentId: string) => {
     try {
+        const cacheKey = `document-${companyId}:${documentId}`
         const result = await pool.query(documentsQueries.remove, [
             companyId,
             documentId,
         ])
 
         const results: Document = result.rows[0]
+
+        deleteCache(cacheKey)
 
         return { results }
     } catch (error) {
