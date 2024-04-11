@@ -37,7 +37,7 @@ const getById = async (req: Request, res: Response) => {
 const remove = async (req: Request, res: Response) => {
     try {
         const { id: companyId } = req.params
-        const { id: userId } = req.body.user
+        const { id: userId } = req.body.payload.user
         const { results: userResults, error: userError } =
             await usersRepository.getById(companyId, userId)
         const isUserValid = !!userId && !userError
