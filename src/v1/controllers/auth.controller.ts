@@ -19,26 +19,27 @@ const SITE_ORIGIN = `http://localhost:${SITE_PORT}`
 
 const login = async (req: Request, res: Response) => {
     try {
-        const validUserRequest = req.body.user
+        const validUserRequest = req.body.payload.user
+        console.log(validUserRequest)
         if (!validUserRequest)
             return res.status(400).json({
                 ...responses.badRequest,
-                tip: 'No user email or password given',
+                message: 'No user email or password given',
             })
 
-        const { email, password } = req.body.user
+        const { email, password } = req.body.payload.user
         const user = await usersRepository.getByEmail(email)
 
         if (!user)
             return res.status(401).json({
                 ...responses.unauthorized,
-                tip: 'Email not found',
+                message: 'Email not found',
             })
 
         if (!user.is_verified)
             return res.status(403).json({
                 ...responses.forbidden,
-                tip: 'User not verified',
+                message: 'User not verified',
             })
 
         const isPasswordCorrect = await bcrypt.compare(
@@ -49,7 +50,7 @@ const login = async (req: Request, res: Response) => {
         if (!isPasswordCorrect)
             return res.status(401).json({
                 ...responses.unauthorized,
-                tip: 'Password is incorrect.',
+                message: 'Password is incorrect.',
             })
 
         const userData = {
@@ -146,7 +147,8 @@ const logout = (req: Request, res: Response) => {
 
 const register = async (req: Request, res: Response) => {
     try {
-        const { company, user }: { company: Company; user: User } = req.body
+        const { company, user }: { company: Company; user: User } =
+            req.body.payload
 
         if (!company || !user)
             return res.status(400).json({ ...responses.badRequest })
