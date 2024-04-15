@@ -13,7 +13,7 @@ import documentsRouter from '@v1/routes/documents.routes'
 import emailMiddleware from '@middleware/email'
 import { authenticateToken } from '@middleware/authorization'
 import swaggerConfig from '@src/swagger.json'
-// import { job } from '@src/cron'
+import { job } from '@src/cron'
 
 dotenv.config()
 const app: Express = express()
@@ -23,7 +23,7 @@ app.use(cors({ credentials: true, origin: 'http://localhost:3000' }))
 app.use(helmet())
 app.use(express.json())
 app.use(cookieParser())
-// job.start()
+job.start()
 
 !process.env.NODE_ENV && app.use('/public', express.static('public'))
 
