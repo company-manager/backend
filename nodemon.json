@@ -1,12 +1,13 @@
 {
   "ignore": [".git", "node_modules"],
   "watch": [
-    "src",
+    "cache",
     "controllers",
-    "queries",
     "database",
     "middleware",
+    "queries",
     "routes",
+    "src",
     "utils"
   ],
   "exec": "node -r tsconfig-paths/register -r ts-node/register ./src/server.ts",
