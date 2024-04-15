@@ -19,8 +19,8 @@ const SITE_ORIGIN = `http://localhost:${SITE_PORT}`
 
 const login = async (req: Request, res: Response) => {
     try {
+        console.log(req.body)
         const validUserRequest = req.body.payload.user
-        console.log(validUserRequest)
         if (!validUserRequest)
             return res.status(400).json({
                 ...responses.badRequest,
