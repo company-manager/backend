@@ -6,10 +6,13 @@ type Schema = Joi.ObjectSchema<unknown>
 
 const dataValidator = (schema: Schema, key?: string | undefined) => {
     return (req: Request, res: Response, next: NextFunction) => {
-        const { value, error } = schema.validate(key ? req.body[key] : req.body)
+        const { value, error } = schema.validate(
+            key ? req.body.payload[key] : req.body.payload,
+        )
 
         if (error) {
             const errorMessage = error.details[0].message
+            console.log(error)
             return res
                 .status(400)
                 .json({ ...responses.badRequest, error: errorMessage })
