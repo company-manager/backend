@@ -80,7 +80,6 @@ const doGetById = async <T>(
 ) => {
     try {
         const companyId = req.cookies.company_id
-        const { id } = req.params
 
         if (!companyId) {
             return res.status(401).json({
@@ -88,6 +87,8 @@ const doGetById = async <T>(
                 message: 'Company id is required',
             })
         }
+
+        const { id } = req.params
 
         const { results, error } = await service.getById(companyId, id)
 

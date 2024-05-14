@@ -1,3 +1,4 @@
+import { CompanyId } from '@global-types/index'
 import redisClient from 'cache/redis'
 
 const get = async (key: string) => {
@@ -21,7 +22,7 @@ interface Data {
 
 const update = async <T extends Data>(
     instance: string,
-    companyId: string,
+    companyId: CompanyId,
     data: T,
 ) => {
     // Update list

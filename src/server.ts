@@ -14,6 +14,7 @@ import emailMiddleware from '@middleware/email'
 import { authenticateToken } from '@middleware/authorization'
 import swaggerConfig from '@src/swagger.json'
 import { job } from '@src/cron'
+import getCompanyId from '@src/middleware/getCompanyId'
 
 dotenv.config()
 const app: Express = express()
@@ -35,7 +36,7 @@ app.get('/api', (req, res) =>
     res.status(200).json({ message: '👋 Welcome to server' }),
 )
 
-app.use('/api/v1/users', authenticateToken, usersRouter)
+app.use('/api/v1/users', authenticateToken, getCompanyId, usersRouter)
 app.use('/api/v1/clients', authenticateToken, clientsRouter)
 app.use('/api/v1/projects', authenticateToken, projectsRouter)
 app.use('/api/v1/documents', authenticateToken, documentsRouter)

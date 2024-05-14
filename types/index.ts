@@ -1,5 +1,5 @@
 import { GENERAL_EMAIL, SUPPORT_EMAIL } from '@emails/list'
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response, NextFunction, Locals } from 'express'
 
 interface HttpCallback {
     req: Request
@@ -49,10 +49,12 @@ interface Email {
     to: string
 }
 
+type CompanyId = (Record<string, unknown> & Locals) | string
+
 interface Client {
     id: string
     name: string
-    company_id: string
+    company_id: (Record<string, unknown> & Locals) | string
     taxpayer_id: string
     address_1: string
     address_2: string
@@ -80,4 +82,14 @@ interface Document {
     author_id: string
 }
 
-export { Company, HttpCallback, Role, User, Email, Project, Client, Document }
+export {
+    CompanyId,
+    Company,
+    HttpCallback,
+    Role,
+    User,
+    Email,
+    Project,
+    Client,
+    Document,
+}

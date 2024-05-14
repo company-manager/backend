@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import pool from '@database/index'
-import { Client } from '@global-types/index'
+import { Client, CompanyId } from '@global-types/index'
 import clientsQueries from '@v1/queries/clients.queries'
 import {
     get,
@@ -9,7 +9,7 @@ import {
     remove as deleteCache,
 } from 'cache/utils'
 
-const getAll = async (companyId: string) => {
+const getAll = async (companyId: CompanyId) => {
     try {
         const cacheKey = `all-clients-${companyId}`
         const cache = await get(cacheKey)
@@ -31,7 +31,7 @@ const getAll = async (companyId: string) => {
     }
 }
 
-const getById = async (companyId: string, clientId: string) => {
+const getById = async (companyId: CompanyId, clientId: string) => {
     try {
         const cacheKey = `client-${companyId}:${clientId}`
         const cache = await get(cacheKey)
@@ -56,7 +56,7 @@ const getById = async (companyId: string, clientId: string) => {
     }
 }
 
-const getByTaxpayerId = async (companyId: string, taxpayerId: string) => {
+const getByTaxpayerId = async (companyId: CompanyId, taxpayerId: string) => {
     const results = await pool.query(clientsQueries.getByTaxpayerId, [
         companyId,
         taxpayerId,
@@ -66,7 +66,7 @@ const getByTaxpayerId = async (companyId: string, taxpayerId: string) => {
 }
 
 const create = async (
-    companyId: string,
+    companyId: CompanyId,
     data: Omit<Client, 'id' | 'company_id'>,
 ) => {
     try {
@@ -113,7 +113,7 @@ const create = async (
 }
 
 const update = async (
-    companyId: string,
+    companyId: CompanyId,
     clientId: string,
     data: Partial<Client>,
 ) => {
@@ -151,7 +151,7 @@ const update = async (
     }
 }
 
-const remove = async (companyId: string, clientId: string) => {
+const remove = async (companyId: CompanyId, clientId: string) => {
     try {
         const cacheKey = `client-${companyId}:${clientId}`
         const result = await pool.query(clientsQueries.remove, [
